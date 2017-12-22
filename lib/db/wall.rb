@@ -15,6 +15,7 @@ module Vk
     def correct?
       return false unless data = hash_load
       update_attribute(:last_message_id, get_lmi(data)) if last_message_id.nil?
+      update_attribute(:wall_id, get_wid(data)) if wall_id.nil?
       true
     end
 
@@ -22,6 +23,13 @@ module Vk
 
     def get_lmi(records)
       records.max_by { |x| x['id'].to_i }['id'].to_i
+    end
+
+    def get_wid(records)
+      records.detect { |x| x['from_id'].to_i == x['to_id'].to_i }['to_id'].to_i
+    rescue StandardError
+      log.error $ERROR_INFO
+      nil
     end
 
     def http_load

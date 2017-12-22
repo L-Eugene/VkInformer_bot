@@ -34,7 +34,7 @@ $LOAD_PATH.unshift(
 
 require 'log/logger'
 require 'db/model'
-require 'vk/classes'
+require 'vk/exceptions'
 
 class VkInformerTestBot 
   attr_reader :token, :client, :log, :chat
