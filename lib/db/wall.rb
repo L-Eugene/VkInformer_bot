@@ -13,19 +13,30 @@ module Vk
     end
 
     def correct?
-      return false unless data = hash_load
-      update_attribute(:last_message_id, get_lmi(data)) if last_message_id.nil?
-      update_attribute(:wall_id, get_wid(data)) if wall_id.nil?
+      return false unless (data = hash_load)
+      update_attribute(:last_message_id, lmi(data)) if last_message_id.nil?
+      update_attribute(:wall_id, wid(data)) if wall_id.nil?
       true
     end
 
-  private
+    def process
+      new_messages.each do |msg|
+        post = Vk::Post.new msg
+        chats.each { |chat| chat.send_post(post) if chat.enabled? }
+        update_attribute(
+          :last_message_id,
+          [post.message_id, last_message_id].max
+        )
+      end
+    end
 
-    def get_lmi(records)
+    private
+
+    def lmi(records)
       records.max_by { |x| x['id'].to_i }['id'].to_i
     end
 
-    def get_wid(records)
+    def wid(records)
       records.detect { |x| x['from_id'].to_i == x['to_id'].to_i }['to_id'].to_i
     rescue StandardError
       log.error $ERROR_INFO
@@ -35,9 +46,9 @@ module Vk
     def http_load
       Wall.conn.post(
         '/method/wall.get',
-         domain: domain,
-         count: 20,
-         access_token: Vk::Config.get('vk_token')
+        domain: domain,
+        count: 20,
+        access_token: Vk::Config.get('vk_token')
       )
     rescue Faraday::Error
       log.info "Could not connect to VK.COM. (#{$ERROR_INFO.message})"
@@ -45,7 +56,7 @@ module Vk
     end
 
     def hash_load
-      return false unless response = http_load
+      return false unless (response = http_load)
       data = JSON.parse response.body
 
       return false if data.key? 'error'
@@ -54,7 +65,17 @@ module Vk
     rescue JSON::ParserError
       log.info 'Error while parsing JSON response from VK.COM.'
       log.debug $ERROR_INFO.message
-      return false      
+      return false
+    end
+
+    def new_messages
+      return [] unless (data = hash_load)
+      data.select  { |msg| msg['id'].to_i > last_message_id }
+          .sort_by { |msg| msg['id'].to_i }
+    end
+
+    def log
+      Vk::Log.logger
     end
 
     def self.conn
@@ -64,8 +85,6 @@ module Vk
       end
     end
 
-    def log
-      Vk::Log.logger
-    end
+    private_class_method :conn
   end
 end

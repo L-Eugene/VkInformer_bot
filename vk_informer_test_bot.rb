@@ -1,6 +1,5 @@
-#
-# file: vk_informer_test_bot.rb 
-#
+# frozen_string_literal: true
+
 require 'English'
 require 'telegram/bot'
 require 'faraday'
@@ -8,16 +7,17 @@ require 'json'
 require 'yaml'
 
 module Vk
+  # Config singleton
   class Config
     @@options = nil
 
-    def self.getConfPath
+    def self.conf_path
       "#{__FILE__}.yml"
     end
 
     def self.options
       return @@options unless @@options.nil?
-      @@options = YAML.load_file(getConfPath)
+      @@options = YAML.load_file(conf_path)
     end
 
     def self.get(option)
@@ -26,21 +26,22 @@ module Vk
   end
 end
 
-
 $LOAD_PATH.unshift(
-  File.join(File.dirname(__FILE__), Vk::Config::get('libdir')), 
-  File.join(File.dirname(__FILE__), Vk::Config::get('basedir'))
+  File.join(File.dirname(__FILE__), Vk::Config.get('libdir')),
+  File.join(File.dirname(__FILE__), Vk::Config.get('basedir'))
 )
 
 require 'log/logger'
 require 'db/model'
+require 'vk/classes'
 require 'vk/exceptions'
 
-class VkInformerTestBot 
+# Main bot class
+class VkInformerTestBot
   attr_reader :token, :client, :log, :chat
 
   def initialize
-    @token  = Vk::Config::get('tg_token')
+    @token  = Vk::Config.get('tg_token')
     @client = Telegram::Bot::Client.new(@token)
     @log    = Vk::Log.logger
   end
@@ -51,7 +52,7 @@ class VkInformerTestBot
 
     return if message.nil?
 
-    @chat = Vk::Chat.find_or_create_by(chat_id: message.chat.id) 
+    @chat = Vk::Chat.find_or_create_by(chat_id: message.chat.id)
 
     meth = (message.text || '').downcase
     [%r{\@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
@@ -60,10 +61,14 @@ class VkInformerTestBot
   end
 
   def scan
-    p "Ok"
+    Vk::Wall.find_each do |wall|
+      next unless wall.watched?
+
+      wall.process
+    end
   end
 
-private
+  private
 
   HELP_MESSAGE = <<~TEXT
     <strong>/help</strong>  - Print this help message.
@@ -71,25 +76,25 @@ private
     <strong>/stop</strong>  - Pause watching (list of watched groups are not deleted).
     <strong>/add</strong> <em>domain</em> - Add group to watch list. <em>Domain</em> is human-readable group identifier.
     <strong>/delete</strong> <em>domain</em> - Delete group from watch list. <em>Domain</em> is the same as in <strong>/add</strong> command.
-    <strong>/list</strong> - Show the list of watched groups.    
+    <strong>/list</strong> - Show the list of watched groups.
   TEXT
 
   def cmd_start(_msg)
-    chat.send_message "Enabling this chat" unless chat.enabled?
+    chat.send_message 'Enabling this chat' unless chat.enabled?
     chat.update_attribute(:enabled, true)
   end
 
   def cmd_stop(_msg)
-    chat.send_message "Disabling this chat" if chat.enabled?
+    chat.send_message 'Disabling this chat' if chat.enabled?
     chat.update_attribute(:enabled, false)
   end
 
   def cmd_add(msg)
     group = Vk::Wall.find_or_create_by(domain: msg.sub(%r{/add\s*}, ''))
     chat.add group
-  rescue StandardError => error
-    log.error "Cannot add #{group.domain}. Error: #{error}"
-    chat.send_message(error.to_chat) if error.respond_to? 'to_chat'
+  rescue StandardError
+    log.error "Cannot add #{group.domain}. Error: #{$ERROR_INFO}"
+    chat.send_message($ERROR_INFO.to_chat) if $ERROR_INFO.respond_to? 'to_chat'
   else
     log.info "Added http://vk.com/#{group.domain} to chat:#{chat.chat_id}."
     chat.send_message "Added http://vk.com/#{group.domain} to your watchlist"
