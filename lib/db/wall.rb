@@ -84,7 +84,5 @@ module Vk
         faraday.adapter Faraday.default_adapter
       end
     end
-
-    private_class_method :conn
   end
 end

@@ -61,11 +61,16 @@ class VkInformerTestBot
   end
 
   def scan
+    return if scanning?
+    scan_flag
+
     Vk::Wall.find_each do |wall|
       next unless wall.watched?
 
       wall.process
     end
+
+    scan_unflag
   end
 
   private
@@ -78,6 +83,22 @@ class VkInformerTestBot
     <strong>/delete</strong> <em>domain</em> - Delete group from watch list. <em>Domain</em> is the same as in <strong>/add</strong> command.
     <strong>/list</strong> - Show the list of watched groups.
   TEXT
+
+  def scanning?
+    result = File.exist? Vk::Config.get('flag')
+    log.info 'Previous scan is not finished yet.' if result
+    result
+  end
+
+  def scan_flag
+    log.info 'Starting scan'
+    FileUtils.touch Vk::Config.get('flag')
+  end
+
+  def scan_unflag
+    FileUtils.rm Vk::Config.get('flag')
+    log.info 'Finish scan'
+  end
 
   def cmd_start(_msg)
     chat.send_message 'Enabling this chat' unless chat.enabled?
