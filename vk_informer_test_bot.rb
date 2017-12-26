@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'singleton'
 require 'English'
 require 'telegram/bot'
 require 'faraday'
@@ -9,26 +10,21 @@ require 'yaml'
 module Vk
   # Config singleton
   class Config
-    @@options = nil
+    include Singleton
 
-    def self.conf_path
-      "#{__FILE__}.yml"
-    end
+    attr_reader :options
 
-    def self.options
-      return @@options unless @@options.nil?
-      @@options = YAML.load_file(conf_path)
-    end
+    CONFIG_PATH = "#{__FILE__}.yml"
 
-    def self.get(option)
-      options[option]
+    def initialize
+      @options = YAML.load_file(CONFIG_PATH)
     end
   end
 end
 
 $LOAD_PATH.unshift(
-  File.join(File.dirname(__FILE__), Vk::Config.get('libdir')),
-  File.join(File.dirname(__FILE__), Vk::Config.get('basedir'))
+  File.join(File.dirname(__FILE__), Vk::Config.instance.options['libdir']),
+  File.join(File.dirname(__FILE__), Vk::Config.instance.options['basedir'])
 )
 
 require 'log/logger'
@@ -41,9 +37,9 @@ class VkInformerTestBot
   attr_reader :token, :client, :log, :chat
 
   def initialize
-    @token  = Vk::Config.get('tg_token')
+    @token  = Vk::Config.instance.options['tg_token']
     @client = Telegram::Bot::Client.new(@token)
-    @log    = Vk::Log.logger
+    @log    = Vk::Log.instance.logger
   end
 
   def update(data)
@@ -85,18 +81,18 @@ class VkInformerTestBot
   TEXT
 
   def scanning?
-    result = File.exist? Vk::Config.get('flag')
+    result = File.exist? Vk::Config.instance.options['flag']
     log.info 'Previous scan is not finished yet.' if result
     result
   end
 
   def scan_flag
     log.info 'Starting scan'
-    FileUtils.touch Vk::Config.get('flag')
+    FileUtils.touch Vk::Config.instance.options['flag']
   end
 
   def scan_unflag
-    FileUtils.rm Vk::Config.get('flag')
+    FileUtils.rm Vk::Config.instance.options['flag']
     log.info 'Finish scan'
   end
 

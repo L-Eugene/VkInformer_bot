@@ -57,7 +57,7 @@ module Vk
         )
       end
     rescue StandardError => e
-      Vk::Log.logger.error e.message
+      Vk::Log.instance.logger.error e.message
     end
 
     def send_photo(b)
@@ -79,7 +79,7 @@ module Vk
     private
 
     def telegram
-      @@client ||= Telegram::Bot::Client.new(Vk::Config.get('tg_token'))
+      @@client ||= Telegram::Bot::Client.new(Vk::Config.instance.options['tg_token'])
     end
 
     def split_message(text)

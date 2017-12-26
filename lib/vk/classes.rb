@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'singleton'
+
 module Vk
   # Single VK post
   class Post
@@ -63,6 +65,20 @@ module Vk
         when 'photo'
           @photo << item_photo(a)
         end
+      end
+    end
+  end
+
+  # Faraday connection singleton
+  class Connection
+    include Singleton
+
+    attr_reader :conn
+
+    def initialize
+      @conn ||= Faraday.new(url: 'https://api.vk.com') do |faraday|
+        faraday.request :url_encoded
+        faraday.adapter Faraday.default_adapter
       end
     end
   end

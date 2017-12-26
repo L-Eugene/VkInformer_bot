@@ -44,11 +44,11 @@ module Vk
     end
 
     def http_load
-      Wall.conn.post(
+      Vk::Connection.instance.conn.post(
         '/method/wall.get',
         domain: domain,
         count: 20,
-        access_token: Vk::Config.get('vk_token')
+        access_token: Vk::Config.instance.options['vk_token']
       )
     rescue Faraday::Error
       log.info "Could not connect to VK.COM. (#{$ERROR_INFO.message})"
@@ -75,14 +75,7 @@ module Vk
     end
 
     def log
-      Vk::Log.logger
-    end
-
-    def self.conn
-      @@conn ||= Faraday.new(url: 'https://api.vk.com') do |faraday|
-        faraday.request :url_encoded
-        faraday.adapter Faraday.default_adapter
-      end
+      Vk::Log.instance.logger
     end
   end
 end
