@@ -79,7 +79,7 @@ module Vk
     private
 
     def telegram
-      @@client ||= Telegram::Bot::Client.new(Vk::Config.instance.options['tg_token'])
+      Vk::Tlg.instance.client
     end
 
     def split_message(text)

@@ -2,6 +2,7 @@
 
 require 'active_record'
 
+# VK Bot namespace
 module Vk
   # Default active record class
   class VkInformerTestBase < ActiveRecord::Base

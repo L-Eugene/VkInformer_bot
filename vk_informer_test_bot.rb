@@ -31,14 +31,14 @@ require 'log/logger'
 require 'db/model'
 require 'vk/classes'
 require 'vk/exceptions'
+require 'telegram/classes'
 
 # Main bot class
 class VkInformerTestBot
   attr_reader :token, :client, :log, :chat
 
   def initialize
-    @token  = Vk::Config.instance.options['tg_token']
-    @client = Telegram::Bot::Client.new(@token)
+    @client = Vk::Tlg.instance.client
     @log    = Vk::Log.instance.logger
   end
 

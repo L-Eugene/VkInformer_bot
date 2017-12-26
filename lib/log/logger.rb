@@ -10,8 +10,11 @@ module Vk
     attr_reader :logger
 
     def initialize
+      flag = Vk::Config.instance.options['debug']
+
       @logger = Logger.new(Vk::Config.instance.options['logfile'], 'daily')
-      @logger.level = File.exist?(Vk::Config.instance.options['debug']) ? Logger::DEBUG : Logger::INFO
+      @logger.level = Logger::INFO
+      @logger.level = Logger::DEBUG if File.exist?(flag)
       @logger.formatter = proc do |severity, datetime, _progname, msg|
         date_format = datetime.strftime('%Y-%m-%d %H:%M:%S')
         "[#{date_format}] #{severity}: #{msg}\n"
