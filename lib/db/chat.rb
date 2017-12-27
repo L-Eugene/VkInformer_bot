@@ -36,9 +36,9 @@ module Vk
     end
 
     def add(wall)
-      raise Vk::IncorrectGroup.new(wall) unless wall.correct?
+      raise Vk::IncorrectGroup, wall unless wall.correct?
       raise Vk::TooMuchGroups if full?
-      raise Vk::AlreadyWatching.new(wall) if watching? wall
+      raise Vk::AlreadyWatching, wall if watching? wall
       walls << wall
     end
 

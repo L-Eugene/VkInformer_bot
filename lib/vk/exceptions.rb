@@ -3,25 +3,21 @@
 module Vk
   # No such group exception
   class NoSuchGroup < StandardError
-    def message
-      'Group not found'
-    end
+    attr_reader :to_chat
 
-    def to_chat
-      'No such group.'
+    def initialize
+      @to_chat = 'No such group.'
+      super('Group not found.')
     end
   end
 
   # Incorrect group exception
   class IncorrectGroup < StandardError
-    attr_reader :wall
-    def initialize(w)
-      @wall = w
-      super "Error receiving group #{wall.domain}"
-    end
+    attr_reader :to_chat
 
-    def to_chat
-      "Group https://vk.com/#{wall.domain} is invalid."
+    def initialize(w)
+      @to_chat = "Group https://vk.com/#{w.domain} is invalid."
+      super "Error receiving group #{w.domain}"
     end
   end
 
@@ -34,14 +30,11 @@ module Vk
 
   # Already watching exception
   class AlreadyWatching < StandardError
-    attr_reader :wall
-    def initialize(w)
-      @wall = w
-      super "Chat is already watching group #{wall.domain}"
-    end
+    attr_reader :to_chat
 
-    def to_chat
-      "You are already watching https://vk.com/#{wall.domain}"
+    def initialize(w)
+      @wall = "You are already watching https://vk.com/#{w.domain}"
+      super "Chat is already watching group #{w.domain}"
     end
   end
 end
