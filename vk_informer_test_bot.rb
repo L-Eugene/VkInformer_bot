@@ -57,7 +57,10 @@ class VkInformerTestBot
   end
 
   def scan
-    return if scanning?
+    if scanning?
+      log.warning 'Previous scan is still running.'
+      return
+    end
     scan_flag
 
     Vk::Wall.find_each do |wall|

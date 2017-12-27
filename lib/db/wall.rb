@@ -20,8 +20,10 @@ module Vk
     end
 
     def process
+      log.info " ++ Processing #{domain}."
       new_messages.each do |msg|
         post = Vk::Post.new msg
+        log.info " ++ Sending #{post.message_id}."
         chats.each { |chat| chat.send_post(post) if chat.enabled? }
         update_attribute(
           :last_message_id,
@@ -51,7 +53,7 @@ module Vk
         access_token: Vk::Config.instance.options['vk_token']
       )
     rescue Faraday::Error
-      log.info "Could not connect to VK.COM. (#{$ERROR_INFO.message})"
+      log.error "Could not connect to VK.COM. (#{$ERROR_INFO.message})"
       return false
     end
 
@@ -63,7 +65,7 @@ module Vk
       data['response'].shift
       data['response']
     rescue JSON::ParserError
-      log.info 'Error while parsing JSON response from VK.COM.'
+      log.error 'Error while parsing JSON response from VK.COM.'
       log.debug $ERROR_INFO.message
       return false
     end

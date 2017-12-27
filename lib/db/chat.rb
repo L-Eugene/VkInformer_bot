@@ -56,8 +56,8 @@ module Vk
           parse_mode: parse_mode
         )
       end
-    rescue StandardError => e
-      Vk::Log.instance.logger.error e.message
+    rescue StandardError
+      logger.error $ERROR_INFO
     end
 
     def send_photo(b)
@@ -80,6 +80,10 @@ module Vk
 
     def telegram
       Vk::Tlg.instance.client
+    end
+
+    def logger
+      Vk::Log.instance.logger
     end
 
     def split_message(text)
