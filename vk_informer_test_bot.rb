@@ -58,7 +58,7 @@ class VkInformerTestBot
 
   def scan
     if scanning?
-      log.warning 'Previous scan is still running.'
+      log.warn 'Previous scan is still running.'
       return
     end
     scan_flag
@@ -84,9 +84,7 @@ class VkInformerTestBot
   TEXT
 
   def scanning?
-    result = File.exist? Vk::Config.instance.options['flag']
-    log.info 'Previous scan is not finished yet.' if result
-    result
+    File.exist? Vk::Config.instance.options['flag']
   end
 
   def scan_flag

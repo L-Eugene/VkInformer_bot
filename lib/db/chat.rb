@@ -47,7 +47,7 @@ module Vk
       walls.delete wall
     end
 
-    def send_message(text, parse_mode = nil)
+    def send_message(text, parse_mode = 'Markdown')
       split_message(text).each do |t|
         telegram.api.send_message(
           chat_id: chat_id,
@@ -66,7 +66,8 @@ module Vk
       else
         telegram.api.send_photo(
           chat_id: chat_id,
-          photo: b.first[:media]
+          photo: b.first[:media],
+          caption: b.first[:caption]
         )
       end
     end

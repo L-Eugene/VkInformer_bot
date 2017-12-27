@@ -5,13 +5,13 @@ require 'singleton'
 module Vk
   # Single VK post
   class Post
-    attr_reader :text, :photo, :message_id
+    attr_reader :text, :photo, :message_id, :domain
 
-    def initialize(data)
-      @text = [normalize_text(data['text'])]
+    def initialize(data, wall)
+      @domain = wall.domain
 
+      @text = ["*#{normalize_text(domain)}:*\n#{normalize_text(data['text'])}"]
       @photo = []
-
       @message_id = data['id']
 
       parse_attachments data
@@ -23,16 +23,20 @@ module Vk
       text.gsub('<br>', "\n")
           .gsub(%r{</?[^>]*>}, '')
           .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '\2:(https://vk.com/\1)')
+          .gsub('_', '\_')
+          .gsub('*', '\*')
     end
 
     def item_album(item)
       imgurl = get_album_image item['thumb']
       return {} if imgurl.nil?
 
+      alburl = "https://vk.com/album#{item['owner_id']}_#{item['aid']}"
+
       {
         type: 'photo',
         media: imgurl,
-        caption: "#{item['title']}: https://vk.com/album#{item['owner_id']}_#{item['aid']}"
+        caption: "#{domain}: #{item['title']}: #{alburl}"
       }
     end
 
@@ -42,12 +46,13 @@ module Vk
 
       {
         type: 'photo',
-        media: imgurl
+        media: imgurl,
+        caption: domain
       }
     end
 
     def item_video(item)
-      "https://vk.com/video#{item['owner_id']}_#{item['vid']}"
+      "#{domain}: https://vk.com/video#{item['owner_id']}_#{item['vid']}"
     end
 
     def get_album_image(a)

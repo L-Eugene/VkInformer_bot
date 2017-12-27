@@ -22,7 +22,7 @@ module Vk
     def process
       log.info " ++ Processing #{domain}."
       new_messages.each do |msg|
-        post = Vk::Post.new msg
+        post = Vk::Post.new msg, self
         log.info " ++ Sending #{post.message_id}."
         chats.each { |chat| chat.send_post(post) if chat.enabled? }
         update_attribute(
