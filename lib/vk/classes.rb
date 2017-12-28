@@ -10,7 +10,7 @@ module Vk
     def initialize(data, wall)
       @domain = wall.domain
 
-      @text = ["*#{normalize_text(domain)}:*\n#{normalize_text(data['text'])}"]
+      @text = ["*#{domain}:*\n#{normalize_text(data['text'])}"]
       @photo = []
       @message_id = data['id']
 
@@ -22,21 +22,21 @@ module Vk
     def normalize_text(text)
       text.gsub('<br>', "\n")
           .gsub(%r{</?[^>]*>}, '')
-          .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '\2:(https://vk.com/\1)')
+          .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')
           .gsub('_', '\_')
           .gsub('*', '\*')
     end
 
     def item_album(item)
-      imgurl = get_album_image item['thumb']
+      imgurl = get_album_image item['album']['thumb']
       return {} if imgurl.nil?
 
-      alburl = "https://vk.com/album#{item['owner_id']}_#{item['aid']}"
+      alburl = "https://vk.com/album#{item['album']['owner_id']}_#{item['album']['aid']}"
 
       {
         type: 'photo',
         media: imgurl,
-        caption: "#{domain}: #{item['title']}: #{alburl}"
+        caption: "#{domain}: #{item['album']['title']}: #{alburl}"
       }
     end
 
