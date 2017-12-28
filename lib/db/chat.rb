@@ -57,19 +57,24 @@ module Vk
         )
       end
     rescue StandardError
-      logger.error $ERROR_INFO
+      print_error $ERROR_INFO
     end
 
     def send_photo(b)
-      if b.size > 1
-        telegram.api.send_media_group(chat_id: chat_id, media: b.to_json)
-      else
-        telegram.api.send_photo(
-          chat_id: chat_id,
-          photo: b.first[:media],
-          caption: b.first[:caption]
-        )
-      end
+      telegram.api.send_photo(
+        chat_id: chat_id,
+        photo: b.first[:media],
+        caption: b.first[:caption]
+      )
+    rescue StandardError
+      print_error $ERROR_INFO
+    end
+
+    def send_photo(b)
+      return send_photo b.first if b.size == 1
+      telegram.api.send_media_group(chat_id: chat_id, media: b.to_json)
+    rescue StandardError
+      print_error $ERROR_INFO
     end
 
     def send_post(post)
@@ -85,6 +90,11 @@ module Vk
 
     def logger
       Vk::Log.instance.logger
+    end
+
+    def print_error(e)
+      logger.error e.message
+      update!(enabled: false) if e.message.include? "bot was blocked by the user"
     end
 
     def split_message(text)
