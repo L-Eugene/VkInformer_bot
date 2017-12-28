@@ -10,7 +10,7 @@ module Vk
     has_many :walls, through: :links
 
     WATCH_LIMIT = 5
-    MAX_LENGTH  = 4080
+    MAX_LENGTH  = 4000
 
     after_create :init
 
