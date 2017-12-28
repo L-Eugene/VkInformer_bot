@@ -1,0 +1,21 @@
+libdir: vk_informer_bot_test/lib/
+basedir: vk_informer_bot_test/db/
+
+vk_token: YOUR_VK_TOKEN 
+tg_token: YOUR_TELEGRAM_TOKEN
+
+logfile: ../log/vk_informer_bot_test.log
+
+flag: /tmp/vk_informer_bot_test_scan
+debug: /tmp/vk_informer_bot_test_debug
+
+database:
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  min_messages: warning
+  timeout: 5000
+  username: username
+  password: password
+  database: database
+  socket: /var/run/mysqld/mysqld.sock
