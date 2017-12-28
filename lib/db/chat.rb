@@ -70,7 +70,7 @@ module Vk
       print_error $ERROR_INFO
     end
 
-    def send_photo(b)
+    def send_media(b)
       return send_photo b.first if b.size == 1
       telegram.api.send_media_group(chat_id: chat_id, media: b.to_json)
     rescue StandardError
@@ -78,7 +78,7 @@ module Vk
     end
 
     def send_post(post)
-      post.photo.in_groups_of(10, false) { |p| send_photo(p) }
+      post.photo.in_groups_of(10, false) { |p| send_media(p) }
       post.text.each { |t| send_message(t) }
     end
 
