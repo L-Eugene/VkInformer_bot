@@ -2,7 +2,7 @@
 
 module Vk
   # Groups
-  class Wall < VkInformerTestBase
+  class Wall < VkInformerBase
     has_many :links
     has_many :chats, through: :links
 

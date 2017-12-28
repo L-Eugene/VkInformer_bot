@@ -4,7 +4,7 @@ require 'db/model.rb'
 
 module Vk
   # Chats
-  class Chat < VkInformerTestBase
+  class Chat < VkInformerBase
     has_many :links
     has_many :posts
     has_many :walls, through: :links

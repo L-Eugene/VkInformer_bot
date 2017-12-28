@@ -34,7 +34,7 @@ require 'vk/exceptions'
 require 'telegram/classes'
 
 # Main bot class
-class VkInformerTestBot
+class VkInformerBot
   attr_reader :token, :client, :log, :chat
 
   def initialize

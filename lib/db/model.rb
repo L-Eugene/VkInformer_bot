@@ -5,7 +5,7 @@ require 'active_record'
 # VK Bot namespace
 module Vk
   # Default active record class
-  class VkInformerTestBase < ActiveRecord::Base
+  class VkInformerBase < ActiveRecord::Base
     self.abstract_class = true
 
     establish_connection(Vk::Config.instance.options['database'])
