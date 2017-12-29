@@ -21,15 +21,18 @@ module Vk
 
     def process
       log.info " ++ Processing #{domain}."
-      new_messages.each do |msg|
+      records = new_messages
+      records.each do |msg|
         post = Vk::Post.new msg, self
-        log.info " ++ Sending #{post.message_id}."
+        log.info " +++ Sending #{post.message_id}."
         chats.each { |chat| chat.send_post(post) if chat.enabled? }
-        update_attribute(
-          :last_message_id,
-          [post.message_id, last_message_id].max
-        )
       end
+      update_last records
+    end
+
+    def update_last(records = new_messages)
+      log.info " +++ Updating last for #{domain}"
+      update_attribute(:last_message_id, lmi(records)) unless records.empty?
     end
 
     private

@@ -61,16 +61,13 @@ class VkInformerBot
   end
 
   def scan
-    if scanning?
-      log.warn 'Previous scan is still running.'
-      return
-    end
+    return log.warn 'Previous scan is still running.' if scanning?
     scan_flag
 
     Vk::Wall.find_each do |wall|
-      next unless wall.watched?
-
-      wall.process
+      run = wall.watched?
+      wall.process if run
+      wall.update_last unless run
     end
 
     scan_unflag
