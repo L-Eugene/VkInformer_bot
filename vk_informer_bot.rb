@@ -52,6 +52,10 @@ class VkInformerBot
 
     meth = (message.text || '').downcase
     [%r{\@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
+
+    log.info "#{meth} command from #{chat.chat_id}"
+    log.debug "Full command is #{message.text}"
+
     meth = "cmd_#{meth}"
     send(meth, message.text) if respond_to? meth.to_sym, true
   end
