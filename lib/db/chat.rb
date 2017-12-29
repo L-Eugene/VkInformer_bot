@@ -48,16 +48,20 @@ module Vk
     end
 
     def send_message(text, parse_mode = 'Markdown')
-      split_message(text).each do |t|
-        telegram.api.send_message(
-          chat_id: chat_id,
-          text: t,
-          disable_web_page_preview: true,
-          parse_mode: parse_mode
-        )
+      options = {
+        chat_id: chat_id,
+        parse_mode: parse_mode,
+        disable_web_page_preview: true
+      }.merge(text)
+      split_message(text[:text]).each do |t|
+        telegram.api.send_message(options.merge(text: t))
       end
     rescue StandardError
       print_error $ERROR_INFO
+    end
+
+    def send_text(text, parse_mode = 'Markdown')
+      send_message(text: text, parse_mode: parse_mode)
     end
 
     def send_photo(b)

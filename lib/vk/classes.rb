@@ -10,7 +10,7 @@ module Vk
     def initialize(data, wall)
       @domain = wall.domain
 
-      @text = ["*#{domain}:*\n#{normalize_text(data['text'])}"]
+      @text = [item_text(data)]
       @photo = []
       @message_id = data['id']
 
@@ -53,7 +53,25 @@ module Vk
     end
 
     def item_video(item)
-      "#{domain}: https://vk.com/video#{item['owner_id']}_#{item['vid']}"
+      url = "https://vk.com/video#{item['owner_id']}_#{item['vid']}"
+
+      {
+        text: "#{domain}: #{url}",
+        disable_web_page_preview: false
+      }
+    end
+
+    def item_link(item)
+      {
+        text: "[#{item['link']['title']}](#{item['link']['url']})",
+        disable_web_page_preview: false
+      }
+    end
+
+    def item_text(item)
+      {
+        text: "*#{domain}:*\n#{normalize_text(item['text'])}"
+      }
     end
 
     def get_album_image(a)
@@ -62,16 +80,33 @@ module Vk
     end
 
     def parse_attachments(data)
+      return unless data.key? 'attachments'
       data['attachments'].each do |a|
-        case a['type']
-        when 'album'
-          @photo << item_album(a)
-        when 'video'
-          @text.unshift item_video(a)
-        when 'photo'
-          @photo << item_photo(a)
-        end
+        meth = "parse_#{a['type']}"
+        supported = respond_to? meth.to_sym, true
+        send(meth, a) if supported
+        logger.info "Unsupported attachment #{a['type']}" unless supported
       end
+    end
+
+    def parse_album(a)
+      @photo << item_album(a)
+    end
+
+    def parse_video(a)
+      @text.unshift item_video(a)
+    end
+
+    def parse_photo(a)
+      @photo << item_photo(a)
+    end
+
+    def parse_link(a)
+      @text.unshift item_link(a)
+    end
+
+    def logger
+      Vk::Log.instance.logger
     end
   end
 

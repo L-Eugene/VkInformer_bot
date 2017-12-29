@@ -102,12 +102,12 @@ class VkInformerBot
   end
 
   def cmd_start(_msg)
-    chat.send_message 'Enabling this chat' unless chat.enabled?
+    chat.send_text 'Enabling this chat' unless chat.enabled?
     chat.update_attribute(:enabled, true)
   end
 
   def cmd_stop(_msg)
-    chat.send_message 'Disabling this chat' if chat.enabled?
+    chat.send_text 'Disabling this chat' if chat.enabled?
     chat.update_attribute(:enabled, false)
   end
 
@@ -116,10 +116,10 @@ class VkInformerBot
     chat.add group
   rescue StandardError
     log.error "Cannot add #{group.domain}. Error: #{$ERROR_INFO}"
-    chat.send_message($ERROR_INFO.to_chat) if $ERROR_INFO.respond_to? 'to_chat'
+    chat.send_text($ERROR_INFO.to_chat) if $ERROR_INFO.respond_to? 'to_chat'
   else
     log.info "Added http://vk.com/#{group.domain} to chat:#{chat.chat_id}."
-    chat.send_message "Added http://vk.com/#{group.domain} to your watchlist"
+    chat.send_text "Added http://vk.com/#{group.domain} to your watchlist"
   ensure
     Vk::Wall.where(last_message_id: nil).delete_all
   end
@@ -130,16 +130,16 @@ class VkInformerBot
     chat.delete group
   rescue StandardError => error
     log.error "Cannot remove #{domain}. Error: #{error}"
-    chat.send_message(error.to_chat) if error.respond_to? 'to_chat'
+    chat.send_text(error.to_chat) if error.respond_to? 'to_chat'
   else
-    chat.send_message "Removed http://vk.com/#{domain} from watchlist"
+    chat.send_text "Removed http://vk.com/#{domain} from watchlist"
   end
 
   def cmd_list(_msg)
-    chat.send_message chat.status, 'HTML'
+    chat.send_text chat.status, 'HTML'
   end
 
   def cmd_help(_msg)
-    chat.send_message HELP_MESSAGE, 'HTML'
+    chat.send_text HELP_MESSAGE, 'HTML'
   end
 end
