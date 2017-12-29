@@ -94,7 +94,7 @@ module Vk
 
     def print_error(e)
       logger.error e.message
-      update!(enabled: false) if e.message.include? "bot was blocked by the user"
+      update!(enabled: false) if e.message.include? 'was blocked by the user'
     end
 
     def split_message(text)

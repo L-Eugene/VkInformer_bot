@@ -31,7 +31,8 @@ module Vk
       imgurl = get_album_image item['album']['thumb']
       return {} if imgurl.nil?
 
-      alburl = "https://vk.com/album#{item['album']['owner_id']}_#{item['album']['aid']}"
+      alb_id = "#{item['album']['owner_id']}_#{item['album']['aid']}"
+      alburl = "https://vk.com/album#{alb_id}"
 
       {
         type: 'photo',
