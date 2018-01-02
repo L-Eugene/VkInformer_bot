@@ -67,8 +67,8 @@ module Vk
     def send_photo(b)
       telegram.api.send_photo(
         chat_id: chat_id,
-        photo: b.first[:media],
-        caption: b.first[:caption]
+        photo: b[:media],
+        caption: b[:caption]
       )
     rescue StandardError
       print_error $ERROR_INFO

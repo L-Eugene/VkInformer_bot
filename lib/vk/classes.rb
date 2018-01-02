@@ -53,11 +53,16 @@ module Vk
     end
 
     def item_video(item)
-      url = "https://vk.com/video#{item['owner_id']}_#{item['vid']}"
+      vid = "#{item['video']['owner_id']}_#{item['video']['vid']}"
 
       {
-        text: "#{domain}: #{url}",
-        disable_web_page_preview: false
+        text: <<~HTML,
+          <b>#{domain}</b>:
+          <a href="https://vk.com/video#{vid}">#{normalize_text(item['video']['title'])}</a>
+           #{normalize_text(item['video']['description'])}
+        HTML
+        disable_web_page_preview: false,
+        parse_mode: 'HTML'
       }
     end
 
