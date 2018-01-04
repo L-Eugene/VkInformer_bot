@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'db/model.rb'
+require 'db/vk_informer_model.rb'
 
 module Vk
   # Chats

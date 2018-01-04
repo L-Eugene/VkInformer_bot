@@ -27,11 +27,11 @@ $LOAD_PATH.unshift(
   File.join(File.dirname(__FILE__), Vk::Config.instance.options['basedir'])
 )
 
-require 'log/logger'
-require 'db/model'
-require 'vk/classes'
-require 'vk/exceptions'
-require 'telegram/classes'
+require 'log/vk_informer_logger'
+require 'db/vk_informer_model'
+require 'vk/vk_informer_classes'
+require 'vk/vk_informer_exceptions'
+require 'telegram/vk_informer_classes'
 
 # Main bot class
 class VkInformerBot

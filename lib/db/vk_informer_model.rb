@@ -15,6 +15,6 @@ module Vk
   ActiveSupport::LogSubscriber.colorize_logging = false
 end
 
-require 'db/chat.rb'
-require 'db/wall.rb'
-require 'db/link.rb'
+require 'db/vk_informer_chat.rb'
+require 'db/vk_informer_wall.rb'
+require 'db/vk_informer_link.rb'
