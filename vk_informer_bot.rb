@@ -50,13 +50,8 @@ class VkInformerBot
 
     @chat = Vk::Chat.find_or_create_by(chat_id: message.chat.id)
 
-    meth = (message.text || '').downcase
-    [%r{\@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
+    meth = method_from_text(message.text)
 
-    log.info "#{meth} command from #{chat.chat_id}"
-    log.debug "Full command is #{message.text}"
-
-    meth = "cmd_#{meth}"
     send(meth, message.text) if respond_to? meth.to_sym, true
   end
 
@@ -83,6 +78,16 @@ class VkInformerBot
     <strong>/delete</strong> <em>domain</em> - Delete group from watch list. <em>Domain</em> is the same as in <strong>/add</strong> command.
     <strong>/list</strong> - Show the list of watched groups.
   TEXT
+
+  def method_from_message(text)
+    meth = (text || '').downcase
+    [%r{\@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
+
+    log.info "#{meth} command from #{chat.chat_id}"
+    log.debug "Full command is #{text}"
+
+    "cmd_#{meth}"
+  end
 
   def scanning?
     File.exist? Vk::Config.instance.options['flag']
@@ -111,12 +116,11 @@ class VkInformerBot
   def cmd_add(msg)
     group = Vk::Wall.find_or_create_by(domain: msg.sub(%r{/add\s*}, ''))
     chat.add group
-  rescue StandardError
-    log.error "Cannot add #{group.domain}. Error: #{$ERROR_INFO}"
-    chat.send_text($ERROR_INFO.to_chat) if $ERROR_INFO.respond_to? 'to_chat'
-  else
     log.info "Added http://vk.com/#{group.domain} to chat:#{chat.chat_id}."
     chat.send_text "Added http://vk.com/#{group.domain} to your watchlist"
+  rescue StandardError
+    log.error "Cannot add #{group.domain}. Error: #{$ERROR_INFO}"
+    chat.send_text $ERROR_INFO.to_chat if $ERROR_INFO.respond_to? 'to_chat'
   ensure
     Vk::Wall.where(last_message_id: nil).delete_all
   end
