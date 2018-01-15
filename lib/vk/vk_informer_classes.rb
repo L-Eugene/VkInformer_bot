@@ -27,10 +27,10 @@ module Vk
           .gsub('*', '\*')
     end
 
-    def domain_prefix(domain, type = 'Markdown')
+    def domain_prefix(domain, type = :markdown)
       d = normalize_text domain
-      return "[https://vk.com/#{domain}](#{domain}) ##{d}" if type == 'Markdown'
-      return "https://vk.com/#{domain} ##{domain}" if type == 'Plain'
+      return "[https://vk.com/#{domain}](#{domain}) ##{d}" if type == :markdown
+      return "https://vk.com/#{domain} ##{domain}" if type == :plain
       "<a href='https://vk.com/#{domain}'>#{domain}</a> ##{domain}"
     end
 
@@ -40,11 +40,12 @@ module Vk
 
       alb_id = "#{item['album']['owner_id']}_#{item['album']['aid']}"
       alburl = "https://vk.com/album#{alb_id}"
+      tag = domain_prefix(domain, :plain)
 
       {
         type: 'photo',
         media: imgurl,
-        caption: "#{domain_prefix domain, 'Plain'} #{item['album']['title']}: #{alburl}"
+        caption: "#{tag} #{item['album']['title']}: #{alburl}"
       }
     end
 
@@ -55,7 +56,7 @@ module Vk
       {
         type: 'photo',
         media: imgurl,
-        caption: domain_prefix(domain, 'Plain')
+        caption: domain_prefix(domain, :plain)
       }
     end
 
@@ -64,7 +65,7 @@ module Vk
 
       {
         text: <<~HTML,
-          <b>#{domain_prefix domain, 'HTML'}</b>:
+          <b>#{domain_prefix domain, :html}</b>:
           <a href="https://vk.com/video#{vid}">#{normalize_text(item['video']['title'])}</a>
            #{normalize_text(item['video']['description'])}
         HTML
@@ -88,9 +89,7 @@ module Vk
     end
 
     def item_text(item)
-      {
-        text: "#{domain_prefix domain}:\n#{normalize_text(item['text'])}"
-      }
+      { text: "#{domain_prefix domain}:\n#{normalize_text(item['text'])}" }
     end
 
     def get_album_image(a)
