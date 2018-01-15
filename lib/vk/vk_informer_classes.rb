@@ -27,6 +27,13 @@ module Vk
           .gsub('*', '\*')
     end
 
+    def domain_prefix(domain, type = 'Markdown')
+      d = normalize_text domain
+      return "[https://vk.com/#{domain}](#{domain}) ##{d}" if type == 'Markdown'
+      return "https://vk.com/#{domain} ##{domain}" if type == 'Plain'
+      "<a href='https://vk.com/#{domain}'>#{domain}</a> ##{domain}"
+    end
+
     def item_album(item)
       imgurl = get_album_image item['album']['thumb']
       return {} if imgurl.nil?
@@ -37,7 +44,7 @@ module Vk
       {
         type: 'photo',
         media: imgurl,
-        caption: "#{domain}: #{item['album']['title']}: #{alburl}"
+        caption: "#{domain_prefix domain, 'Plain'} #{item['album']['title']}: #{alburl}"
       }
     end
 
@@ -48,7 +55,7 @@ module Vk
       {
         type: 'photo',
         media: imgurl,
-        caption: domain
+        caption: domain_prefix(domain, 'Plain')
       }
     end
 
@@ -57,7 +64,7 @@ module Vk
 
       {
         text: <<~HTML,
-          <b>#{domain}</b>:
+          <b>#{domain_prefix domain, 'HTML'}</b>:
           <a href="https://vk.com/video#{vid}">#{normalize_text(item['video']['title'])}</a>
            #{normalize_text(item['video']['description'])}
         HTML
@@ -73,9 +80,16 @@ module Vk
       }
     end
 
+    def item_doc(item)
+      {
+        text: "[#{item['doc']['title']}](#{item['doc']['url']})",
+        disable_web_page_preview: false
+      }
+    end
+
     def item_text(item)
       {
-        text: "*#{domain}:*\n#{normalize_text(item['text'])}"
+        text: "#{domain_prefix domain}:\n#{normalize_text(item['text'])}"
       }
     end
 
@@ -108,6 +122,10 @@ module Vk
 
     def parse_link(a)
       @text.unshift item_link(a)
+    end
+
+    def parse_doc(a)
+      @text.unshift item_doc(a)
     end
 
     def logger

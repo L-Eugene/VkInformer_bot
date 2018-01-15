@@ -6,7 +6,6 @@ module Vk
   # Chats
   class Chat < VkInformerBase
     has_many :links
-    has_many :posts
     has_many :walls, through: :links
 
     WATCH_LIMIT = 5

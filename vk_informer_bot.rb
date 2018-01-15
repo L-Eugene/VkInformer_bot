@@ -50,7 +50,7 @@ class VkInformerBot
 
     @chat = Vk::Chat.find_or_create_by(chat_id: message.chat.id)
 
-    meth = method_from_text(message.text)
+    meth = method_from_message(message.text)
 
     send(meth, message.text) if respond_to? meth.to_sym, true
   end
