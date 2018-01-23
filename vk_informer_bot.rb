@@ -115,9 +115,7 @@ class VkInformerBot
 
   def cmd_add(msg)
     group = Vk::Wall.find_or_create_by(domain: msg.sub(%r{/add\s*}, ''))
-    chat.add group
-    log.info "Added http://vk.com/#{group.domain} to chat:#{chat.chat_id}."
-    chat.send_text "Added http://vk.com/#{group.domain} to your watchlist"
+    do_add group
   rescue StandardError
     log.error "Cannot add #{group.domain}. Error: #{$ERROR_INFO}"
     chat.send_text $ERROR_INFO.to_chat if $ERROR_INFO.respond_to? 'to_chat'
@@ -142,5 +140,11 @@ class VkInformerBot
 
   def cmd_help(_msg)
     chat.send_text HELP_MESSAGE, 'HTML'
+  end
+
+  def do_add(group)
+    chat.add group
+    log.info "Added http://vk.com/#{group.domain} to chat:#{chat.chat_id}."
+    chat.send_text "Added http://vk.com/#{group.domain} to your watchlist"
   end
 end

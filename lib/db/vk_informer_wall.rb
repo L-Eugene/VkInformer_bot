@@ -59,7 +59,7 @@ module Vk
       )
     rescue Faraday::Error
       log.error "Could not connect to VK.COM. (#{$ERROR_INFO.message})"
-      return false
+      false
     end
 
     def hash_load
@@ -67,13 +67,12 @@ module Vk
       data = JSON.parse response.body
 
       return false if data.key? 'error'
-      data['response'].shift
       log.debug data.to_json
-      data['response']
+      data['response'].drop 1
     rescue JSON::ParserError
       log.error 'Error while parsing JSON response from VK.COM.'
       log.debug $ERROR_INFO.message
-      return false
+      false
     end
 
     def new_messages
