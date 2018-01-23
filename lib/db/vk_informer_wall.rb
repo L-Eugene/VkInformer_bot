@@ -31,8 +31,10 @@ module Vk
     end
 
     def update_last(records = new_messages)
-      log.info " +++ Updating last for #{domain}"
-      update_attribute(:last_message_id, lmi(records)) unless records.empty?
+      return if records.empty?
+      last_value = lmi(records)
+      log.info " +++ Updating last for #{domain} (#{last_value})"
+      update_attribute(:last_message_id, last_value)
     end
 
     private
@@ -66,6 +68,7 @@ module Vk
 
       return false if data.key? 'error'
       data['response'].shift
+      log.debug data.to_json
       data['response']
     rescue JSON::ParserError
       log.error 'Error while parsing JSON response from VK.COM.'
