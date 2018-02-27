@@ -56,8 +56,7 @@ class VkInformerBot
   end
 
   def scan
-    return log.warn 'Previous scan is still running.' if scanning?
-    scan_flag
+    log.info 'Starting scan'
 
     Vk::Wall.find_each do |wall|
       run = wall.watched?
@@ -65,7 +64,7 @@ class VkInformerBot
       wall.update_last unless run
     end
 
-    scan_unflag
+    log.info 'Finish scan'
   end
 
   private
@@ -87,20 +86,6 @@ class VkInformerBot
     log.debug "Full command is #{text}"
 
     "cmd_#{meth}"
-  end
-
-  def scanning?
-    File.exist? Vk::Config.instance.options['flag']
-  end
-
-  def scan_flag
-    log.info 'Starting scan'
-    FileUtils.touch Vk::Config.instance.options['flag']
-  end
-
-  def scan_unflag
-    FileUtils.rm Vk::Config.instance.options['flag']
-    log.info 'Finish scan'
   end
 
   def cmd_start(_msg)
