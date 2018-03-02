@@ -80,9 +80,16 @@ module Vk
       print_error $ERROR_INFO
     end
 
+    def send_doc(d)
+      telegram.api.send_document(d.merge(chat_id: chat_id))
+    rescue StandardError
+      print_error $ERROR_INFO
+    end
+
     def send_post(post)
       logger.info "Sending #{post.message_id} to #{chat_id}"
       post.photo.in_groups_of(10, false) { |p| send_media(p) }
+      post.docs.each { |d| send_doc d }
       post.text.each { |t| send_message(t) }
     end
 

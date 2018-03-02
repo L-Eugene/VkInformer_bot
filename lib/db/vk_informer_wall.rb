@@ -54,7 +54,8 @@ module Vk
       Vk::Connection.instance.conn.post(
         '/method/wall.get',
         domain: domain,
-        count: 20,
+        count: 30,
+        v: 3,
         access_token: Vk::Config.instance.options['vk_token']
       )
     rescue Faraday::Error
