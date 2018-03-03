@@ -2,8 +2,10 @@
 
 module Vk
   # Links between chats and groups
-  class Link < VkInformerBase
+  class Cwlink < VkInformerBase
     belongs_to :wall
     belongs_to :chat
+
+    self.table_name = 'links'
   end
 end

@@ -3,8 +3,8 @@
 module Vk
   # Groups
   class Wall < VkInformerBase
-    has_many :links
-    has_many :chats, through: :links
+    has_many :cwlinks
+    has_many :chats, through: :cwlinks
 
     validates_uniqueness_of :domain
 

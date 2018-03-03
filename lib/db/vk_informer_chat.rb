@@ -5,8 +5,8 @@ require 'db/vk_informer_model.rb'
 module Vk
   # Chats
   class Chat < VkInformerBase
-    has_many :links
-    has_many :walls, through: :links
+    has_many :cwlinks
+    has_many :walls, through: :cwlinks
 
     WATCH_LIMIT = 5
     MAX_LENGTH  = 4000

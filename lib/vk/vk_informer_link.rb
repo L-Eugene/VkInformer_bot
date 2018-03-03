@@ -2,7 +2,7 @@
 
 module Vk
   # Sending URL attached to message
-  class WebLink < Attachment
+  class Link < Attachment
     attr_reader :text
 
     def initialize(domain, node)
