@@ -31,6 +31,13 @@ require 'log/vk_informer_logger'
 require 'db/vk_informer_model'
 require 'vk/vk_informer_classes'
 require 'vk/vk_informer_exceptions'
+require 'vk/vk_informer_attachment'
+require 'vk/vk_informer_album'
+require 'vk/vk_informer_doc'
+require 'vk/vk_informer_link'
+require 'vk/vk_informer_photo'
+require 'vk/vk_informer_text'
+require 'vk/vk_informer_video'
 require 'telegram/vk_informer_classes'
 
 # Main bot class

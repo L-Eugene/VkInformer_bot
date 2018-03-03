@@ -1,0 +1,28 @@
+# frozen_string_literal: true
+
+module Vk
+  # Video attachment
+  class Video < Attachment
+    attr_reader :title, :description, :vid
+
+    def initialize(domain, node)
+      super
+
+      @vid = "#{node['video']['owner_id']}_#{node['video']['vid']}"
+      @title = item['video']['title']
+      @description = item['video']['description']
+    end
+
+    def to_hash
+      {
+        text: <<~HTML,
+          <b>#{domain_prefix domain, :html}</b>:
+          <a href="https://vk.com/video#{vid}">#{normalize_text item['video']['title']}</a>
+           #{normalize_text item['video']['description']}
+        HTML
+        disable_web_page_preview: false,
+        parse_mode: 'HTML'
+      }
+    end
+  end
+end

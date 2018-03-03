@@ -11,7 +11,7 @@ module Vk
     def initialize(data, wall)
       @domain = wall.domain
 
-      @text = [item_text(data)]
+      @text = [Vk::Textual.new(domain, data).to_hash]
       @photo = []
       @docs = []
       @message_id = data['id']
@@ -34,71 +34,6 @@ module Vk
       "<a href='https://vk.com/#{domain}'>#{domain}</a> ##{domain}"
     end
 
-    def item_album(item)
-      return {} unless (imgurl = get_album_image item['album']['thumb'])
-
-      alb_id = "#{item['album']['owner_id']}_#{item['album']['aid']}"
-      alburl = "https://vk.com/album#{alb_id}"
-      tag = domain_prefix(domain, :plain)
-
-      {
-        type: 'photo', media: imgurl,
-        caption: "#{tag} #{item['album']['title']}: #{alburl}"
-      }
-    end
-
-    def item_photo(item)
-      return {} unless (imgurl = get_album_image item['photo'])
-
-      { type: 'photo', media: imgurl, caption: domain_prefix(domain, :plain) }
-    end
-
-    def item_video(item)
-      vid = "#{item['video']['owner_id']}_#{item['video']['vid']}"
-
-      {
-        text: <<~HTML,
-          <b>#{domain_prefix domain, :html}</b>:
-          <a href="https://vk.com/video#{vid}">#{normalize_text(item['video']['title'])}</a>
-           #{normalize_text(item['video']['description'])}
-        HTML
-        disable_web_page_preview: false, parse_mode: 'HTML'
-      }
-    end
-
-    def item_link(item)
-      {
-        text: "[#{item['link']['title']}](#{item['link']['url']})",
-        disable_web_page_preview: false
-      }
-    end
-
-    def item_doc_gif(item)
-      f = Tempfile.new(['vk_informer', '.gif'])
-      f.write Vk::Connection.get_file(item['doc']['url'])
-      {
-        document: Faraday::UploadIO.new(f.path, 'image/gif'),
-        caption: "#{domain_prefix(domain)}\n#{item['doc']['title']}",
-        parse_mode: 'Markdown'
-      }
-    end
-
-    def item_doc(item)
-      {
-        text: "[#{item['doc']['title']}](#{item['doc']['url']})",
-        disable_web_page_preview: false
-      }
-    end
-
-    def item_text(item)
-      { text: "#{domain_prefix domain}:\n#{normalize_text(item['text'])}" }
-    end
-
-    def get_album_image(a)
-      k = %w[src_xxxbig src_xxbig src_xbig src_big src].find { |x| a.key? x }
-      k.nil? ? nil : a[k]
-    end
-
     def parse_attachments(data)
       return unless data.key? 'attachments'
       data['attachments'].each do |a|
@@ -109,24 +44,25 @@ module Vk
     end
 
     def parse_album(a)
-      @photo << item_album(a)
+      @photo << Vk::Album.new(domain, a).to_hash
     end
 
     def parse_video(a)
-      @text.unshift item_video(a)
+      @text.unshift Vk::Video.new(domain, a).to_hash
     end
 
     def parse_photo(a)
-      @photo << item_photo(a)
+      @photo << Vk::Photo.new(domain, a).to_hash
     end
 
     def parse_link(a)
-      @text.unshift item_link(a)
+      @text.unshift Vk::WebLink.new(domain, a).to_hash
     end
 
     def parse_doc(a)
-      return @docs << item_doc_gif(a) if a['doc']['title'] =~ %r{\.gif$}
-      @text.unshift item_doc(a)
+      t = Vk::Doc.new(domain, a).to_hash
+      return @docs << t if a['doc']['title'] =~ %r{\.gif$}
+      @text.unshift t
     end
 
     def logger
