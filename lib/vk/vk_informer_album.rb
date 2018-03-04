@@ -24,5 +24,9 @@ module Vk
         caption: "#{domain_prefix domain, :plain} #{title}: #{url}"
       }
     end
+
+    def use_method
+      :send_photo
+    end
   end
 end

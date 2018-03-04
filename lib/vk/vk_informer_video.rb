@@ -24,5 +24,9 @@ module Vk
         parse_mode: 'HTML'
       }
     end
+
+    def use_method
+      :send_message
+    end
   end
 end

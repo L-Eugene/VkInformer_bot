@@ -6,17 +6,17 @@ require 'faraday_middleware'
 module Vk
   # Single VK post
   class Post
-    attr_reader :text, :photo, :docs, :message_id, :domain
+    attr_reader :data, :message_id, :domain
 
-    def initialize(data, wall)
+    def initialize(node, wall)
       @domain = wall.domain
 
-      @text = [Vk::Textual.new(domain, data).to_hash]
-      @photo = []
-      @docs = []
-      @message_id = data['id']
+      @message_id = node['id']
 
-      parse_attachments data
+      @data = []
+      parse_attachments node
+      compact_photos
+      @data << Vk::Textual.new(domain, node)
     end
 
     private
@@ -34,39 +34,36 @@ module Vk
       "<a href='https://vk.com/#{domain}'>#{domain}</a> ##{domain}"
     end
 
-    def parse_attachments(data)
-      return unless data.key? 'attachments'
-      data['attachments'].each do |a|
-        meth = "parse_#{a['type']}"
-        send(meth, a) if (supported = respond_to? meth.to_sym, true)
+    def parse_attachments(node)
+      return unless node.key? 'attachments'
+      node['attachments'].each do |a|
+        supported = valid_attachment? a['type']
+        data << attachment(a['type']).new(domain, a)
         logger.info "Unsupported attachment #{a['type']}" unless supported
       end
     end
 
-    def parse_album(a)
-      @photo << Vk::Album.new(domain, a).to_hash
-    end
-
-    def parse_video(a)
-      @text.unshift Vk::Video.new(domain, a).to_hash
-    end
-
-    def parse_photo(a)
-      @photo << Vk::Photo.new(domain, a).to_hash
-    end
-
-    def parse_link(a)
-      @text.unshift Vk::WebLink.new(domain, a).to_hash
-    end
-
-    def parse_doc(a)
-      t = Vk::Doc.new(domain, a).to_hash
-      return @docs << t if a['doc']['title'] =~ %r{\.gif$}
-      @text.unshift t
-    end
-
     def logger
       Vk::Log.instance.logger
+    end
+
+    def valid_attachment?(name)
+      name.downcase!
+      name.capitalize!
+      Vk.const_defined?(name) && Vk.const_get(name).is_a?(Class)
+    end
+
+    def compact_photos
+      t = @data.select { |p| p.use_method == :send_photo }
+               .in_groups_of(10, false).map do |block|
+        block.size > 1 ? Vk::MediaGroup.new(block) : block.first
+      end
+      @data.delete_if { |p| p.use_method == :send_photo }
+      @data.unshift(*t)
+    end
+
+    def attachment(name)
+      Vk.const_get(name.downcase.capitalize)
     end
   end
 

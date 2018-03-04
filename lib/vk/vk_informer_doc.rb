@@ -30,6 +30,10 @@ module Vk
       }
     end
 
+    def use_method
+      gif? ? :send_doc : :send_message
+    end
+
     private
 
     def gif?

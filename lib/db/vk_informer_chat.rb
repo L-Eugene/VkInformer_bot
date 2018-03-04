@@ -88,9 +88,7 @@ module Vk
 
     def send_post(post)
       logger.info "Sending #{post.message_id} to #{chat_id}"
-      post.photo.in_groups_of(10, false) { |p| send_media(p) }
-      post.docs.each { |d| send_doc d }
-      post.text.each { |t| send_message(t) }
+      post.data.each { |p| send(p.use_method, p.to_hash) }
     end
 
     private

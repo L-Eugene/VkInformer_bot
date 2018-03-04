@@ -18,5 +18,9 @@ module Vk
         caption: domain_prefix(domain, :plain)
       }
     end
+
+    def use_method
+      :send_photo
+    end
   end
 end
