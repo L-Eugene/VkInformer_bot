@@ -16,7 +16,7 @@ module Vk
     end
   end
 
-  def tlg
+  def self.tlg
     Vk::Tlg.instance.client
   end
 end
