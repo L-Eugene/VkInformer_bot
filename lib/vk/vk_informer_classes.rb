@@ -39,12 +39,8 @@ module Vk
       node['attachments'].each do |a|
         supported = valid_attachment? a['type']
         data << attachment(a['type']).new(domain, a)
-        logger.info "Unsupported attachment #{a['type']}" unless supported
+        Vk.log.info "Unsupported attachment #{a['type']}" unless supported
       end
-    end
-
-    def logger
-      Vk::Log.instance.logger
     end
 
     def valid_attachment?(name)

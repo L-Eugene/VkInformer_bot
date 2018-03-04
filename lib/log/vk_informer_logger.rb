@@ -2,6 +2,7 @@
 
 require 'singleton'
 
+# Vk module
 module Vk
   # Logger singleton
   class Log
@@ -20,5 +21,9 @@ module Vk
         "[#{date_format}] #{severity}: #{msg}\n"
       end
     end
+  end
+
+  def log
+    Vk::Log.instance.logger
   end
 end

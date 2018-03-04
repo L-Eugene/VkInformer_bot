@@ -20,11 +20,11 @@ module Vk
     end
 
     def process
-      log.info " ++ Processing #{domain}."
+      Vk.log.info " ++ Processing #{domain}."
       records = new_messages
       records.each do |msg|
         post = Vk::Post.new msg, self
-        log.info " +++ Sending #{post.message_id}."
+        Vk.log.info " +++ Sending #{post.message_id}."
         chats.each { |chat| chat.send_post(post) if chat.enabled? }
       end
       update_last records
@@ -33,7 +33,7 @@ module Vk
     def update_last(records = new_messages)
       return if records.empty?
       last_value = lmi(records)
-      log.info " +++ Updating last for #{domain} (#{last_value})"
+      Vk.log.info " +++ Updating last for #{domain} (#{last_value})"
       update_attribute(:last_message_id, last_value)
     end
 
@@ -46,7 +46,7 @@ module Vk
     def wid(records)
       records.detect { |x| x['from_id'].to_i == x['to_id'].to_i }['to_id'].to_i
     rescue StandardError
-      log.error $ERROR_INFO
+      Vk.log.error $ERROR_INFO
       nil
     end
 
@@ -59,7 +59,7 @@ module Vk
         access_token: Vk::Config.instance.options['vk_token']
       )
     rescue Faraday::Error
-      log.error "Could not connect to VK.COM. (#{$ERROR_INFO.message})"
+      Vk.log.error "Could not connect to VK.COM. (#{$ERROR_INFO.message})"
       false
     end
 
@@ -68,11 +68,11 @@ module Vk
       data = JSON.parse response.body
 
       return false if data.key? 'error'
-      log.debug data.to_json
+      Vk.log.debug data.to_json
       data['response'].drop 1
     rescue JSON::ParserError
-      log.error 'Error while parsing JSON response from VK.COM.'
-      log.debug $ERROR_INFO.message
+      Vk.log.error 'Error while parsing JSON response from VK.COM.'
+      Vk.log.debug $ERROR_INFO.message
       false
     end
 
@@ -80,10 +80,6 @@ module Vk
       return [] unless (data = hash_load)
       data.select  { |msg| msg['id'].to_i > last_message_id }
           .sort_by { |msg| msg['id'].to_i }
-    end
-
-    def log
-      Vk::Log.instance.logger
     end
   end
 end

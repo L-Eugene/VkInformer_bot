@@ -53,7 +53,7 @@ module Vk
         disable_web_page_preview: true
       }.merge(text)
       split_message(text[:text]).each do |t|
-        telegram.api.send_message(options.merge(text: t))
+        Vk.tlg.api.send_message(options.merge(text: t))
       end
     rescue StandardError
       print_error $ERROR_INFO
@@ -64,7 +64,7 @@ module Vk
     end
 
     def send_photo(b)
-      telegram.api.send_photo(
+      Vk.tlg.api.send_photo(
         chat_id: chat_id,
         photo: b[:media],
         caption: b[:caption]
@@ -75,34 +75,26 @@ module Vk
 
     def send_media(b)
       return send_photo b.first if b.size == 1
-      telegram.api.send_media_group(chat_id: chat_id, media: b.to_json)
+      Vk.tlg.api.send_media_group(chat_id: chat_id, media: b.to_json)
     rescue StandardError
       print_error $ERROR_INFO
     end
 
     def send_doc(d)
-      telegram.api.send_document(d.merge(chat_id: chat_id))
+      Vk.tlg.api.send_document(d.merge(chat_id: chat_id))
     rescue StandardError
       print_error $ERROR_INFO
     end
 
     def send_post(post)
-      logger.info "Sending #{post.message_id} to #{chat_id}"
+      Vk.log.info "Sending #{post.message_id} to #{chat_id}"
       post.data.each { |p| send(p.use_method, p.to_hash) }
     end
 
     private
 
-    def telegram
-      Vk::Tlg.instance.client
-    end
-
-    def logger
-      Vk::Log.instance.logger
-    end
-
     def print_error(e)
-      logger.error e.message
+      Vk.log.error e.message
       update!(enabled: false) if e.message.include? 'was blocked by the user'
     end
 

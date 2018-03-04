@@ -9,7 +9,7 @@ module Vk
     self.abstract_class = true
 
     establish_connection(Vk::Config.instance.options['database'])
-    @logger = Vk::Log.instance.logger
+    @logger = Vk.log
   end
 
   ActiveSupport::LogSubscriber.colorize_logging = false
