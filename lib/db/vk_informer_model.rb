@@ -19,3 +19,5 @@ end
 require 'db/vk_informer_chat'
 require 'db/vk_informer_wall'
 require 'db/vk_informer_link'
+require 'db/vk_informer_token'
+require 'db/vk_informer_stat'

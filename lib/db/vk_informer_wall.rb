@@ -58,7 +58,7 @@ module Vk
         domain: domain,
         count: 30,
         v: 3,
-        access_token: Vk::Config.instance.options['vk_token']
+        access_token: Vk::Token.best.key
       )
     rescue Faraday::Error
       Vk.log.error "Could not connect to VK.COM. (#{$ERROR_INFO.message})"
