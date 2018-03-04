@@ -23,7 +23,7 @@ module Vk
     end
   end
 
-  def log
+  def self.log
     Vk::Log.instance.logger
   end
 end

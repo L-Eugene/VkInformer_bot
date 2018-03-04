@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_record'
+require 'log/vk_informer_logger'
 
 # VK Bot namespace
 module Vk
@@ -15,6 +16,6 @@ module Vk
   ActiveSupport::LogSubscriber.colorize_logging = false
 end
 
-require 'db/vk_informer_chat.rb'
-require 'db/vk_informer_wall.rb'
-require 'db/vk_informer_link.rb'
+require 'db/vk_informer_chat'
+require 'db/vk_informer_wall'
+require 'db/vk_informer_link'

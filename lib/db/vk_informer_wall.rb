@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'vk/vk_informer_classes'
+
 module Vk
   # Groups
   class Wall < VkInformerBase

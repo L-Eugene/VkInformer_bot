@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'vk/vk_informer_attachment'
+
 module Vk
   # Sending URL attached to message
   class Link < Attachment

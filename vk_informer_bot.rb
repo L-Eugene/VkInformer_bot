@@ -28,26 +28,17 @@ $LOAD_PATH.unshift(
 )
 
 require 'log/vk_informer_logger'
-require 'db/vk_informer_model'
-require 'vk/vk_informer_classes'
-require 'vk/vk_informer_exceptions'
-require 'vk/vk_informer_attachment'
-require 'vk/vk_informer_album'
-require 'vk/vk_informer_doc'
-require 'vk/vk_informer_link'
-require 'vk/vk_informer_media_group'
-require 'vk/vk_informer_photo'
-require 'vk/vk_informer_text'
-require 'vk/vk_informer_video'
 require 'telegram/vk_informer_classes'
+require 'db/vk_informer_model'
+Dir['vk/*.rb'].each { |f| require f }
 
 # Main bot class
 class VkInformerBot
   attr_reader :token, :client, :log, :chat
 
   def initialize
-    @client = Vk::Tlg.instance.client
-    @log    = Vk::Log.instance.logger
+    @client = Vk.tlg
+    @log    = Vk.log
   end
 
   def update(data)

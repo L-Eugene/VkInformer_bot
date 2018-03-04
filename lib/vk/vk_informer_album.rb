@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'vk/vk_informer_attachment'
+
 module Vk
   # Photoalbum attachment
   class Album < Attachment
