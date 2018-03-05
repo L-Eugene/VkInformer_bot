@@ -22,11 +22,15 @@ module Vk
       }
     end
 
+    def result(hash)
+      @file_id = hash['document']['file_id'] if gif?
+    end
+
     def gif_hash
       f = Tempfile.new(['vk_informer', '.gif'])
       f.write Vk::Connection.get_file(url)
       {
-        document: Faraday::UploadIO.new(f.path, 'image/gif'),
+        document: @file_id || Faraday::UploadIO.new(f.path, 'image/gif'),
         caption: "#{domain_prefix domain}\n#{title}",
         parse_mode: 'Markdown'
       }

@@ -16,5 +16,11 @@ module Vk
     def use_method
       :send_media
     end
+
+    def result(hash)
+      hash.each_with_index do |file, index|
+        photos[index].result file
+      end
+    end
   end
 end

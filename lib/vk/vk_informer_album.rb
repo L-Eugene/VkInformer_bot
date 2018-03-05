@@ -22,13 +22,17 @@ module Vk
       return nil unless media
       {
         type: 'photo',
-        media: media,
+        media: @file_id || media,
         caption: "#{domain_prefix domain, :plain} #{title}: #{url}"
       }
     end
 
     def use_method
       :send_photo
+    end
+
+    def result(hash)
+      @file_id = hash['photo'].last['file_id']
     end
   end
 end

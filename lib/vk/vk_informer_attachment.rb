@@ -17,6 +17,10 @@ module Vk
       raise 'Should be defined in child class'
     end
 
+    def result(hash)
+      nil
+    end
+
     def normalize_text(text)
       text.gsub('<br>', "\n").gsub(%r{</?[^>]*>}, '')
           .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')

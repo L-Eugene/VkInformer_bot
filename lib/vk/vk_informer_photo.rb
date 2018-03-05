@@ -24,5 +24,9 @@ module Vk
     def use_method
       :send_photo
     end
+
+    def result(hash)
+      @file_id = hash['photo'].last['file_id']
+    end
   end
 end

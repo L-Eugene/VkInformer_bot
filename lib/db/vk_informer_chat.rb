@@ -88,7 +88,11 @@ module Vk
 
     def send_post(post)
       Vk.log.info "Sending #{post.message_id} to #{chat_id}"
-      post.data.each { |p| send(p.use_method, p.to_hash) }
+      post.data.each do |p|
+        response = send(p.use_method, p.to_hash)
+        response = response['result'] if response.is_a? Hash
+        p.result response
+      end
     end
 
     private
