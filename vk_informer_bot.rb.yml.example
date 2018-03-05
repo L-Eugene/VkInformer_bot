@@ -1,12 +1,10 @@
 libdir: vk_informer_bot_test/lib/
 basedir: vk_informer_bot_test/db/
 
-vk_token: YOUR_VK_TOKEN 
 tg_token: YOUR_TELEGRAM_TOKEN
 
 logfile: ../log/vk_informer_bot_test.log
 
-flag: /tmp/vk_informer_bot_test_scan
 debug: /tmp/vk_informer_bot_test_debug
 
 database:
