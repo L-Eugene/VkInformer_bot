@@ -9,7 +9,7 @@ module Vk
   class VkInformerBase < ActiveRecord::Base
     self.abstract_class = true
 
-    establish_connection(Vk::Config.instance.options['database'])
+    establish_connection(Vk.cfg.options['database'])
     @logger = Vk.log
   end
 

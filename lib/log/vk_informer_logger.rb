@@ -11,9 +11,9 @@ module Vk
     attr_reader :logger
 
     def initialize
-      flag = Vk::Config.instance.options['debug']
+      flag = Vk.cfg.options['debug']
 
-      @logger = Logger.new(Vk::Config.instance.options['logfile'], 'daily')
+      @logger = Logger.new(Vk.cfg.options['logfile'], 'daily')
       @logger.level = Logger::INFO
       @logger.level = Logger::DEBUG if File.exist?(flag)
       @logger.formatter = proc do |severity, datetime, _progname, msg|

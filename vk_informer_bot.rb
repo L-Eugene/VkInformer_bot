@@ -7,6 +7,7 @@ require 'faraday'
 require 'json'
 require 'yaml'
 
+# VK informer module
 module Vk
   # Config singleton
   class Config
@@ -20,11 +21,15 @@ module Vk
       @options = YAML.load_file(CONFIG_PATH)
     end
   end
+
+  def self.cfg
+    Vk::Config.instance
+  end
 end
 
 $LOAD_PATH.unshift(
-  File.join(File.dirname(__FILE__), Vk::Config.instance.options['libdir']),
-  File.join(File.dirname(__FILE__), Vk::Config.instance.options['basedir'])
+  File.join(File.dirname(__FILE__), Vk.cfg.options['libdir']),
+  File.join(File.dirname(__FILE__), Vk.cfg.options['basedir'])
 )
 
 require 'log/vk_informer_logger'

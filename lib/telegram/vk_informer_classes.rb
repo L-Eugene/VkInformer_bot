@@ -11,7 +11,7 @@ module Vk
     attr_reader :client
 
     def initialize
-      token = Vk::Config.instance.options['tg_token']
+      token = Vk.cfg.options['tg_token']
       @client = Telegram::Bot::Client.new(token)
     end
   end
