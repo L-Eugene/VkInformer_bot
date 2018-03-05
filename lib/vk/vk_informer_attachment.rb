@@ -17,7 +17,7 @@ module Vk
       raise 'Should be defined in child class'
     end
 
-    def result(hash)
+    def result(_hash)
       nil
     end
 
