@@ -11,7 +11,7 @@ namespace :vk do
     desc 'Delete vk token'
     task :del, [:token] do |_t, args|
       begin
-        Vk::Token.find_by(key: args.token).delete
+        Vk::Token.find_by(key: args.token).destroy
         puts "#{args.token} removed".green
       rescue NoMethodError
         puts 'No such token'.red

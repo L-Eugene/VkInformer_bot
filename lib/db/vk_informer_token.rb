@@ -3,7 +3,7 @@
 module Vk
   # VK token
   class Token < VkInformerBase
-    has_many :stats
+    has_many :stats, dependent: :destroy
 
     def act
       stats.find_or_create_by(date: Date.today).act
