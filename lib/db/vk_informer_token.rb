@@ -10,6 +10,10 @@ module Vk
       self
     end
 
+    def today
+      stats.find_or_create_by(date: Date.today).count
+    end
+
     def self.today_stat
       Vk::Token.all.each do |t|
         t.stats.find_or_create_by(date: Date.today)
