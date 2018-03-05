@@ -31,8 +31,8 @@ module Vk
     end
 
     def get_album_image(a)
-      k = %w[src_xxxbig src_xxbig src_xbig src_big src].find { |x| a.key? x }
-      k.nil? ? nil : a[k]
+      k = %w[1280 807 604 130 75].find { |x| a.key? "photo_#{x}" }
+      k.nil? ? nil : a["photo_#{k}"]
     end
   end
 end

@@ -10,7 +10,7 @@ module Vk
     def initialize(domain, node)
       super
 
-      @vid = "#{node['video']['owner_id']}_#{node['video']['vid']}"
+      @vid = "#{node['video']['owner_id']}_#{node['video']['id']}"
       @title = item['video']['title']
       @description = item['video']['description']
     end

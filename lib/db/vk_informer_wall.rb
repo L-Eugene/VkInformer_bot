@@ -57,7 +57,7 @@ module Vk
         '/method/wall.get',
         domain: domain,
         count: 30,
-        v: 3,
+        v: 5.36,
         access_token: Vk::Token.best.key
       )
     rescue Faraday::Error
@@ -71,7 +71,7 @@ module Vk
 
       return false if data.key? 'error'
       Vk.log.debug data.to_json
-      data['response'].drop 1
+      data['response']['items']
     rescue JSON::ParserError
       Vk.log.error 'Error while parsing JSON response from VK.COM.'
       Vk.log.debug $ERROR_INFO.message
