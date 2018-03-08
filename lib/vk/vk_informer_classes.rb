@@ -40,14 +40,13 @@ module Vk
       return unless node.key? 'attachments'
       node['attachments'].each do |a|
         supported = valid_attachment? a['type']
-        data << attachment(a['type']).new(domain, a)
+        data << attachment(a['type']).new(domain, a) if supported
         Vk.log.info "Unsupported attachment #{a['type']}" unless supported
       end
     end
 
     def valid_attachment?(name)
-      name.downcase!
-      name.capitalize!
+      name = name.downcase.capitalize
       Vk.const_defined?(name) && Vk.const_get(name).is_a?(Class)
     end
 
@@ -61,7 +60,8 @@ module Vk
     end
 
     def attachment(name)
-      Vk.const_get(name.downcase.capitalize)
+      name = name.downcase.capitalize
+      Vk.const_get(name) if Vk.const_defined?(name)
     end
   end
 
