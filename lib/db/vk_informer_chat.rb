@@ -8,7 +8,7 @@ module Vk
     has_many :cwlinks
     has_many :walls, through: :cwlinks
 
-    WATCH_LIMIT = 5
+    WATCH_LIMIT = 10
     MAX_LENGTH  = 4000
 
     after_create :init
