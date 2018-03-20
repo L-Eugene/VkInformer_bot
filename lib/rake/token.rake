@@ -21,7 +21,7 @@ namespace :vk do
     desc 'Show token usage statistic'
     task :stat do
       Vk::Token.all.each do |token|
-        puts "#{token.id}: #{token.today}".yellow
+        puts "#{token.id}: #{token.today}"
       end
     end
   end
