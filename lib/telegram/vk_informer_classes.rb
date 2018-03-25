@@ -14,6 +14,10 @@ module Vk
       token = Vk.cfg.options['tg_token']
       @client = Telegram::Bot::Client.new(token)
     end
+
+    def self.escape(text)
+      text.gsub('*', '\*').gsub('_', '\_')
+    end
   end
 
   def self.tlg

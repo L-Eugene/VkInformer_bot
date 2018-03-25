@@ -73,7 +73,7 @@ class VkInformerBot
 
   private
 
-  HELP_MESSAGE = <<~TEXT
+  HELP_MESSAGE = <<-TEXT
     <strong>/help</strong>  - Print this help message.
     <strong>/start</strong> - Start watching.
     <strong>/stop</strong>  - Pause watching (list of watched groups are not deleted).
@@ -120,7 +120,8 @@ class VkInformerBot
     log.error "Cannot remove #{domain}. Error: #{error}"
     chat.send_text(error.to_chat) if error.respond_to? 'to_chat'
   else
-    chat.send_text "Removed http://vk.com/#{domain} from watchlist"
+    gdomain = Vk::Tlg.escape domain
+    chat.send_text "Removed http://vk.com/#{gdomain} from watchlist"
   end
 
   def cmd_list(_msg)
@@ -133,7 +134,8 @@ class VkInformerBot
 
   def do_add(group)
     chat.add group
-    log.info "Added http://vk.com/#{group.domain} to chat:#{chat.chat_id}."
-    chat.send_text "Added http://vk.com/#{group.domain} to your watchlist"
+    gdomain = Vk::Tlg.escape(group.domain)
+    log.info "Added http://vk.com/#{gdomain} to chat:#{chat.chat_id}."
+    chat.send_text "Added http://vk.com/#{gdomain} to your watchlist"
   end
 end
