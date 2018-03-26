@@ -73,7 +73,7 @@ class VkInformerBot
 
   private
 
-  HELP_MESSAGE = <<-TEXT
+  HELP_MESSAGE = <<~TEXT
     <strong>/help</strong>  - Print this help message.
     <strong>/start</strong> - Start watching.
     <strong>/stop</strong>  - Pause watching (list of watched groups are not deleted).
