@@ -82,6 +82,12 @@ module Vk
       return [] unless (data = hash_load)
       data.select  { |msg| msg['id'].to_i > last_message_id }
           .sort_by { |msg| msg['id'].to_i }
+          .map do |msg|
+            id = msg['id']
+            msg = msg['copy_history'].first if msg.key?('copy_history')
+            msg['id'] = id
+            msg
+          end
     end
   end
 end
