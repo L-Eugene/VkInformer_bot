@@ -23,19 +23,6 @@ module Vk
 
     private
 
-    def normalize_text(text)
-      text.gsub('<br>', "\n").gsub(%r{</?[^>]*>}, '')
-          .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')
-          .gsub('_', '\_').gsub('*', '\*')
-    end
-
-    def domain_prefix(domain, type = :markdown)
-      d = normalize_text domain
-      return "[#{domain}](https://vk.com/#{domain}) ##{d}" if type == :markdown
-      return "https://vk.com/#{domain} ##{domain}" if type == :plain
-      "<a href='https://vk.com/#{domain}'>#{domain}</a> ##{domain}"
-    end
-
     def parse_attachments(node)
       return unless node.key? 'attachments'
       node['attachments'].each do |a|

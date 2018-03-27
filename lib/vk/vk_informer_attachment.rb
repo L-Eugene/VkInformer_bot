@@ -28,8 +28,8 @@ module Vk
     end
 
     def domain_prefix(domain, type = :markdown)
-      d = normalize_text domain
-      return "[https://vk.com/#{domain}](#{domain}) ##{d}" if type == :markdown
+      d = normalize_text(domain.tr('.', '_'))
+      return "[#{domain}](https://vk.com/#{domain}) ##{d}" if type == :markdown
       return "https://vk.com/#{domain} ##{domain}" if type == :plain
       "<a href='https://vk.com/#{domain}'>#{domain}</a> ##{domain}"
     end
