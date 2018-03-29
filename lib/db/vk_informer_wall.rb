@@ -84,7 +84,7 @@ module Vk
           .sort_by { |msg| msg['id'].to_i }
           .map do |msg|
             id = msg['id']
-            msg = msg['copy_history'].first if msg.key?('copy_history')
+            msg = msg['copy_history'].last if msg.key?('copy_history')
             msg['id'] = id
             msg
           end
