@@ -26,7 +26,7 @@ module Vk
     end
 
     def result(hash)
-      @file_id = hash['photo'].last['file_id']
+      @file_id = hash['photo'].last['file_id'] if hash
     end
   end
 end

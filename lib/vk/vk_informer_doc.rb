@@ -12,6 +12,7 @@ module Vk
 
       @title = node['doc']['title']
       @url = node['doc']['url']
+      @ext = node['doc']['ext']
     end
 
     def to_hash
@@ -43,7 +44,7 @@ module Vk
     private
 
     def gif?
-      @is_gif ||= title =~ %r{\.gif$}
+      @is_gif ||= title.gsub(%r{\?.*$}, '') =~ %r{\.gif$} || @ext == 'gif'
     end
   end
 end
