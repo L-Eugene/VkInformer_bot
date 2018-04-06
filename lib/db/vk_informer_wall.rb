@@ -69,10 +69,9 @@ module Vk
       return false unless (response = http_load)
       data = JSON.parse response.body
 
-      return false if data.key? 'error'
-      Vk.log.debug data.to_json
+      raise "VK API: #{data['error']['error_msg']}" if data.key? 'error'
       data['response']['items']
-    rescue JSON::ParserError
+    rescue StandardError
       Vk.log.error 'Error while parsing JSON response from VK.COM.'
       Vk.log.debug $ERROR_INFO.message
       false
