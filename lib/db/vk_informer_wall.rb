@@ -73,7 +73,7 @@ module Vk
       data['response']['items']
     rescue StandardError
       Vk.log.error 'Error while parsing JSON response from VK.COM.'
-      Vk.log.debug $ERROR_INFO.message
+      Vk.log.error $ERROR_INFO.message
       false
     end
 
