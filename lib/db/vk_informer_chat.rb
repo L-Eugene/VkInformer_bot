@@ -99,6 +99,7 @@ module Vk
 
     def print_error(e)
       Vk.log.error e.message
+      Vk.log.error e.backtrace.join("\n")
       update!(enabled: false) if e.message.include? 'was blocked by the user'
     end
 

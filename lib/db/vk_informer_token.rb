@@ -22,7 +22,9 @@ module Vk
 
     def self.best
       today_stat
-      Vk::Stat.order(:count).find_by(date: Date.today).token.act
+      result = Vk::Stat.order(:count).find_by(date: Date.today).token.act
+      Vk.log.info " +++ Selected VK token ##{result.id}"
+      result
     end
   end
 end
