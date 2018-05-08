@@ -18,7 +18,7 @@ module Vk
     def to_hash
       {
         text: <<~HTML,
-          Видео: <a href='https://vk.com/video#{vid}'>#{normalize_text title}</a>
+          Video: <a href='https://vk.com/video#{vid}'>#{normalize_text title}</a>
           #{normalize_text description}
           #{domain_prefix domain, :html}
         HTML

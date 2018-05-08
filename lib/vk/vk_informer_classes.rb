@@ -15,10 +15,9 @@ module Vk
 
       @message_id = node['id']
 
-      @data = []
+      @data = [Vk::Textual.new(domain, node)]
       parse_attachments node
       compact_photos
-      @data << Vk::Textual.new(domain, node)
     end
 
     private
