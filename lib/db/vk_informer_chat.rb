@@ -46,13 +46,13 @@ module Vk
       walls.delete wall
     end
 
-    def send_message(text, parse_mode = 'Markdown')
+    def send_message(hash, parse_mode = 'Markdown')
       options = {
         chat_id: chat_id,
         parse_mode: parse_mode,
         disable_web_page_preview: true
-      }.merge(text)
-      split_message(text[:text]).each do |t|
+      }.merge(hash)
+      split_message(hash[:text]).each do |t|
         Vk.tlg.api.send_message(options.merge(text: t))
       end
     rescue StandardError

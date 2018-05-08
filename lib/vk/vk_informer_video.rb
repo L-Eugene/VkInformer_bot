@@ -11,16 +11,16 @@ module Vk
       super
 
       @vid = "#{node['video']['owner_id']}_#{node['video']['id']}"
-      @title = item['video']['title']
-      @description = item['video']['description']
+      @title = node['video']['title']
+      @description = node['video']['description']
     end
 
     def to_hash
       {
         text: <<~HTML,
-          <b>#{domain_prefix domain, :html}</b>:
-          <a href="https://vk.com/video#{vid}">#{normalize_text item['video']['title']}</a>
-           #{normalize_text item['video']['description']}
+          Видео: <a href='https://vk.com/video#{vid}'>#{normalize_text title}</a>
+          #{normalize_text description}
+          #{domain_prefix domain, :html}
         HTML
         disable_web_page_preview: false,
         parse_mode: 'HTML'

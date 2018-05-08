@@ -46,7 +46,7 @@ module Vk
     end
 
     def wid(records)
-      records.detect { |x| x['from_id'].to_i == x['to_id'].to_i }['to_id'].to_i
+      records.first['owner_id'].to_i
     rescue StandardError
       Vk.log.error $ERROR_INFO
       nil
