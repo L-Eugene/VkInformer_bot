@@ -31,7 +31,7 @@ module Vk
       d = domain.tr('.', '_')
       dn = normalize_text d
       return "[#{domain}](https://vk.com/#{domain}) ##{dn}" if type == :markdown
-      return "https://vk.com/#{domain} ##{domain}" if type == :plain
+      return "https://vk.com/#{domain} ##{d}" if type == :plain
       "<a href='https://vk.com/#{domain}'>#{domain}</a> ##{d}"
     end
 

@@ -63,12 +63,12 @@ module Vk
       send_message(text: text, parse_mode: parse_mode)
     end
 
-    def send_photo(b)
-      Vk.tlg.api.send_photo(
+    def send_photo(hash)
+      Vk.tlg.api.send_photo({
         chat_id: chat_id,
-        photo: b[:media],
-        caption: b[:caption]
-      )
+        photo: hash[:media],
+        caption: hash[:caption]
+      }.merge(hash))
     rescue StandardError
       print_error $ERROR_INFO
     end
