@@ -16,7 +16,7 @@ module Vk
       return nil unless media
       {
         type: 'photo',
-        media: media,
+        media: @file_id || media,
         caption: domain_prefix(domain, :plain)
       }
     end

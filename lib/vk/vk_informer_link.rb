@@ -18,6 +18,11 @@ module Vk
       preview? ? to_hash_image : to_hash_text
     end
 
+    def result(hash)
+      return unless hash
+      @file_id = hash['photo'].last['file_id'] if hash.key? 'photo'
+    end
+
     def use_method
       preview? ? :send_photo : :send_message
     end
@@ -38,7 +43,7 @@ module Vk
     def to_hash_image
       {
         type: 'photo',
-        media: @preview,
+        media: @file_id || @preview,
         caption: <<~TEXT,
           #{domain_prefix domain}
           #{text}
