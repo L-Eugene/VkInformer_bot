@@ -10,12 +10,13 @@ module Vk
     def initialize(domain, node)
       super
 
-      @title = node['doc']['title']
+      @title = normalize_text node['doc']['title']
       @url = node['doc']['url']
       @ext = node['doc']['ext']
     end
 
     def to_hash
+      Vk.log.info "[#{title}](#{url})"
       return gif_hash if gif?
       {
         text: "[#{title}](#{url})",
