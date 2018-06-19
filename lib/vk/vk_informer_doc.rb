@@ -16,7 +16,6 @@ module Vk
     end
 
     def to_hash
-      Vk.log.info "[#{title}](#{url})"
       return gif_hash if gif?
       {
         text: "[#{title}](#{url})",

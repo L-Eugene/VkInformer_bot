@@ -18,6 +18,7 @@ module Vk
     end
 
     def result(hash)
+      photos.first.result hash unless hash.is_a? Array
       hash.each_with_index do |file, index|
         photos[index].result file
       end
