@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Migrate #2
-class CreateVkKeysTables < ActiveRecord::Migration
+class CreateVkKeysTables < ActiveRecord::Migration[4.2]
   def create_tokens
     create_table :tokens do |t|
       t.string :key

@@ -1,1 +1,5 @@
 nbproject/
+.idea/
+schema.rb
+Gemfile.lock
+db/test.sqlite3
