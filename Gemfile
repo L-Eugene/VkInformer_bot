@@ -1,15 +1,16 @@
-# Gemfile
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-gem "activerecord"
-gem "faraday"
-gem "faraday_middleware"
-gem "mysql2"
-gem "telegram-bot-ruby"
+source 'https://rubygems.org'
+
+gem 'activerecord'
+gem 'faraday'
+gem 'faraday_middleware'
+gem 'mysql2'
+gem 'telegram-bot-ruby'
 
 group :test do
-  gem "factory_bot"
-  gem "database_cleaner"
-  gem "rspec"
-  gem "sqlite3"
+  gem 'database_cleaner'
+  gem 'factory_bot'
+  gem 'rspec'
+  gem 'sqlite3'
 end

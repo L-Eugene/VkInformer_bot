@@ -1,0 +1,15 @@
+AllCops:
+  TargetRubyVersion: 2.4
+  Exclude:
+    - 'schema.rb'
+
+Style/RegexpLiteral:
+  EnforcedStyle: percent_r
+
+Style/MixinUsage:
+  Exclude:
+    - 'Rakefile'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
