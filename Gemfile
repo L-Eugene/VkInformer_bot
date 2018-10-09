@@ -3,6 +3,8 @@ source "https://rubygems.org"
 
 gem "activerecord"
 gem "faraday"
+gem "faraday_middleware"
+gem "mysql2"
 gem "telegram-bot-ruby"
 
 group :test do
