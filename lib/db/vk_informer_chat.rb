@@ -8,8 +8,10 @@ module Vk
     has_many :cwlinks
     has_many :walls, through: :cwlinks
 
+    # Maximum walls can be watched in one chat
     WATCH_LIMIT = 10
-    MAX_LENGTH  = 4000
+    # Maximal telegram message length
+    MAX_LENGTH  = 4080
 
     after_create :init
 
@@ -107,8 +109,8 @@ module Vk
       result = []
       s = ''
       text.split("\n").each do |p|
-        result << s if s.length + p.length > 4080
-        s = (s.length + p.length) > 4080 ? p : "#{s}\n#{p}"
+        result << s if s.length + p.length > MAX_LENGTH
+        s = (s.length + p.length) > MAX_LENGTH ? p : "#{s}\n#{p}"
       end
       result << s unless s.empty?
       result

@@ -3,6 +3,7 @@
 require 'English'
 require 'factory_bot'
 require 'database_cleaner'
+require 'webmock/rspec'
 
 $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/../lib/")
 $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/../")

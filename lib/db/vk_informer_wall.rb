@@ -41,6 +41,7 @@ module Vk
 
     private
 
+    # last message id
     def lmi(records)
       records.max_by { |x| x['id'].to_i }['id'].to_i
     end
