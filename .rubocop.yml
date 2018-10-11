@@ -13,3 +13,7 @@ Style/MixinUsage:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*_spec.rb'
+
+Metrics/LineLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'

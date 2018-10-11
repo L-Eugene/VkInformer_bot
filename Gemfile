@@ -11,6 +11,7 @@ gem 'telegram-bot-ruby'
 group :test do
   gem 'database_cleaner'
   gem 'factory_bot'
+  gem 'rake'
   gem 'rspec'
   gem 'rubocop'
   gem 'sqlite3'
