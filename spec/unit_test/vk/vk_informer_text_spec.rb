@@ -3,11 +3,16 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Vk::Textual do
-  describe 'Basic' do
-    before(:all) do
-      @obj = Vk::Textual.new('x', text: '123')
-    end
+  before(:all) do
+    @obj = Vk::Textual.new(
+      'x',
+      load_json_fix(
+        File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/text/hash.json'
+      )
+    )
+  end
 
+  describe 'Basic' do
     it 'should provide needed methods' do
       expect(@obj).to respond_to(:to_hash, :use_method)
     end
@@ -18,10 +23,6 @@ describe Vk::Textual do
   end
 
   describe 'Domain prefix and text normalization' do
-    before(:all) do
-      @obj = Vk::Textual.new('x', text: '123')
-    end
-
     it 'should normalize text' do
       expect(@obj.normalize_text('so.me_*doma<i>n')).to eq 'so.me\_\*doman'
     end
@@ -40,10 +41,9 @@ describe Vk::Textual do
 
   describe 'Hash build' do
     it 'should build result hash' do
-      obj = Vk::Textual.new('x', text: 'result text data')
-      expect(obj.to_hash).to be_instance_of(Hash)
-      expect(obj.to_hash).to have_key(:text)
-      expect(obj.to_hash[:text]).to eq "[x](https://vk.com/x) #x:\nresult text data"
+      expect(@obj.to_hash).to be_instance_of(Hash)
+      expect(@obj.to_hash).to have_key(:text)
+      expect(@obj.to_hash[:text]).to eq "[x](https://vk.com/x) #x:\nresult text data"
     end
   end
 end

@@ -14,6 +14,13 @@ FactoryBot.find_definitions
 
 ActiveRecord::Base.establish_connection(Vk.cfg.options['database'])
 
+def load_json_fix(fname)
+  JSON.parse(
+    IO.read(fname),
+    symbolize_names: true
+  )
+end
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
