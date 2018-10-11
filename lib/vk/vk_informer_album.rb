@@ -10,12 +10,12 @@ module Vk
     def initialize(domain, node)
       super
 
-      alb_id = "#{node['album']['owner_id']}_#{node['album']['id']}"
+      alb_id = "#{node[:album][:owner_id]}_#{node[:album][:id]}"
       @url = "https://vk.com/album#{alb_id}"
 
-      @media = get_album_image node['album']['thumb']
+      @media = get_album_image node[:album][:thumb]
 
-      @title = node['album']['title']
+      @title = node[:album][:title]
     end
 
     def to_hash

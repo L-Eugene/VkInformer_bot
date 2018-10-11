@@ -5,7 +5,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 describe Vk::Textual do
   describe 'Basic' do
     before(:all) do
-      @obj = Vk::Textual.new('x', '{ text: "123" }')
+      @obj = Vk::Textual.new('x', text: '123')
     end
 
     it 'should provide needed methods' do
@@ -19,7 +19,7 @@ describe Vk::Textual do
 
   describe 'Domain prefix and text normalization' do
     before(:all) do
-      @obj = Vk::Textual.new('x', '{ text: "123" }')
+      @obj = Vk::Textual.new('x', text: '123')
     end
 
     it 'should normalize text' do
@@ -40,7 +40,7 @@ describe Vk::Textual do
 
   describe 'Hash build' do
     it 'should build result hash' do
-      obj = Vk::Textual.new('x', 'text' => 'result text data')
+      obj = Vk::Textual.new('x', text: 'result text data')
       expect(obj.to_hash).to be_instance_of(Hash)
       expect(obj.to_hash).to have_key(:text)
       expect(obj.to_hash[:text]).to eq "[x](https://vk.com/x) #x:\nresult text data"

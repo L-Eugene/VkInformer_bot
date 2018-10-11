@@ -13,7 +13,7 @@ module Vk
     def initialize(node, wall)
       @domain = wall.domain
 
-      @message_id = node['id']
+      @message_id = node[:id]
 
       @data = [Vk::Textual.new(domain, node)]
       parse_attachments node
@@ -23,11 +23,11 @@ module Vk
     private
 
     def parse_attachments(node)
-      return unless node.key? 'attachments'
-      node['attachments'].each do |a|
-        supported = valid_attachment? a['type']
-        data << attachment(a['type']).new(domain, a) if supported
-        Vk.log.info "Unsupported attachment #{a['type']}" unless supported
+      return unless node.key? :attachments
+      node[:attachments].each do |a|
+        supported = valid_attachment? a[:type]
+        data << attachment(a[:type]).new(domain, a) if supported
+        Vk.log.info "Unsupported attachment #{a[:type]}" unless supported
       end
     end
 

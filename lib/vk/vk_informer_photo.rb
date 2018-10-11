@@ -9,7 +9,7 @@ module Vk
 
     def initialize(domain, node)
       super
-      @media = get_album_image node['photo']
+      @media = get_album_image node[:photo]
     end
 
     def to_hash

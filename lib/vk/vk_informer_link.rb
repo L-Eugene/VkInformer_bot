@@ -10,8 +10,8 @@ module Vk
     def initialize(domain, node)
       super
 
-      @text = "[#{node['link']['title']}](#{node['link']['url']})"
-      @preview = node['link']['image_src'] if node['link'].key? 'image_src'
+      @text = "[#{node[:link][:title]}](#{node[:link][:url]})"
+      @preview = node[:link][:image_src] if node[:link].key? :image_src
     end
 
     def to_hash

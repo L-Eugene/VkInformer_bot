@@ -11,9 +11,9 @@ module Vk
     def initialize(domain, node)
       super
 
-      @title = normalize_text node['doc']['title']
-      @url = node['doc']['url']
-      @ext = node['doc']['ext']
+      @title = normalize_text node[:doc][:title]
+      @url = node[:doc][:url]
+      @ext = node[:doc][:ext]
     end
 
     def to_hash

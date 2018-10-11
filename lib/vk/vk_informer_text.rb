@@ -9,7 +9,7 @@ module Vk
 
     def initialize(domain, node)
       super
-      @text = "#{domain_prefix domain}:\n#{normalize_text(node['text'])}"
+      @text = "#{domain_prefix domain}:\n#{normalize_text(node[:text])}"
     end
 
     def to_hash

@@ -43,11 +43,11 @@ module Vk
 
     # last message id
     def lmi(records)
-      records.max_by { |x| x['id'].to_i }['id'].to_i
+      records.max_by { |x| x[:id].to_i }[:id].to_i
     end
 
     def wid(records)
-      records.first['owner_id'].to_i
+      records.first[:owner_id].to_i
     rescue StandardError
       Vk.log.error $ERROR_INFO
       nil
@@ -68,10 +68,10 @@ module Vk
 
     def hash_load
       return false unless (response = http_load)
-      data = JSON.parse response.body
+      data = JSON.parse(response.body, symbolize_names: true)
 
-      raise "VK API: #{data['error']['error_msg']}" if data.key? 'error'
-      data['response']['items']
+      raise "VK API: #{data[:error][:error_msg]}" if data.key? :error
+      data[:response][:items]
     rescue StandardError
       Vk.log.error 'Error while parsing JSON response from VK.COM.'
       Vk.log.error $ERROR_INFO.message
@@ -80,12 +80,12 @@ module Vk
 
     def new_messages
       return [] unless (data = hash_load)
-      data.select  { |msg| msg['id'].to_i > last_message_id }
-          .sort_by { |msg| msg['id'].to_i }
+      data.select  { |msg| msg[:id].to_i > last_message_id }
+          .sort_by { |msg| msg[:id].to_i }
           .map do |msg|
-            id = msg['id']
-            msg = msg['copy_history'].last if msg.key?('copy_history')
-            msg['id'] = id
+            id = msg[:id]
+            msg = msg[:copy_history].last if msg.key?(:copy_history)
+            msg[:id] = id
             msg
           end
     end

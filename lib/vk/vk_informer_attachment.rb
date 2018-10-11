@@ -36,8 +36,8 @@ module Vk
     end
 
     def get_album_image(a)
-      k = %w[1280 807 604 130 75].find { |x| a.key? "photo_#{x}" }
-      k.nil? ? nil : a["photo_#{k}"]
+      k = %w[1280 807 604 130 75].find { |x| a.key? "photo_#{x}".to_sym }
+      k.nil? ? nil : a["photo_#{k}".to_sym]
     end
   end
 end
