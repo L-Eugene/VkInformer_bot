@@ -2,6 +2,7 @@
 
 require_relative 'vk_informer_bot.rb'
 require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 require 'active_record'
 
 include ActiveRecord::Tasks
@@ -13,11 +14,12 @@ DatabaseTasks.migrations_paths = 'db'
 DatabaseTasks.database_configuration = Vk.cfg.options['database']
 
 RSpec::Core::RakeTask.new
+RuboCop::RakeTask.new
 
 task :environment do
   ActiveRecord::Base.establish_connection Vk.cfg.options['database']
 end
 
-namespace :test do
-  load 'active_record/railties/databases.rake'
-end
+load 'active_record/railties/databases.rake'
+
+task default: ['db:migrate', 'rubocop', 'spec']
