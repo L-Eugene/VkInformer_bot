@@ -1,0 +1,9 @@
+{
+  "type": "link",
+  "link": {
+    "url": "http://example.com/",
+    "title": "sometext",
+    "description": "link description",
+    "target": "internal"
+  }
+}
