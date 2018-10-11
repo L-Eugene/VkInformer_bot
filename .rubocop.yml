@@ -9,11 +9,3 @@ Style/RegexpLiteral:
 Style/MixinUsage:
   Exclude:
     - 'Rakefile'
-
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*_spec.rb'
-
-Metrics/LineLength:
-  Exclude:
-    - 'spec/**/*_spec.rb'
