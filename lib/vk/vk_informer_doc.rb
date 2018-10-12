@@ -28,6 +28,12 @@ module Vk
       @file_id = hash['document']['file_id'] if gif?
     end
 
+    def use_method
+      gif? ? :send_doc : :send_message
+    end
+
+    private
+
     def gif_hash
       f = Tempfile.new(['vk_informer', '.gif'])
       f.write Vk::Connection.get_file(url)
@@ -37,12 +43,6 @@ module Vk
         parse_mode: 'Markdown'
       }
     end
-
-    def use_method
-      gif? ? :send_doc : :send_message
-    end
-
-    private
 
     def gif?
       @is_gif ||= title.gsub(%r{\?.*$}, '') =~ %r{\.gif$} || @ext == 'gif'

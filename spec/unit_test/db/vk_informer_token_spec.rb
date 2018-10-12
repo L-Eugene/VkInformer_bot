@@ -3,7 +3,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Vk::Token do
-  before(:each) do
+  before :each do
     @token = FactoryBot.create(:token, id: 1)
   end
 

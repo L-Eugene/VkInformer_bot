@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Vk::Wall do
   describe 'Basic' do
-    before(:each) do
+    before :each do
       @wall = FactoryBot.create(:wall, id: 1, domain: '1')
     end
 
@@ -45,7 +45,7 @@ describe Vk::Wall do
   end
 
   describe 'Wall processing' do
-    before(:each) do
+    before :each do
       @wall = FactoryBot.create(
         :wall,
         id: 1, domain: 'test', last_message_id: 0
@@ -59,7 +59,7 @@ describe Vk::Wall do
               )
     end
 
-    after(:each) do
+    after :each do
       remove_request_stub(@stub)
     end
 

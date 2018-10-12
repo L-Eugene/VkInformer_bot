@@ -1,0 +1,23 @@
+{
+  "type": "poll",
+  "poll": {
+    "id": 12456,
+    "owner_id": 123,
+    "created": 0,
+    "question": "Poll question",
+    "answers": [
+      {
+        "id": 1,
+        "text": "Poll answer 1"
+      },
+      {
+        "id": 2,
+        "text": "Poll answer 1"
+      },
+      {
+        "id": 3,
+        "text": "Poll answer 1"
+      }
+    ]
+  }
+}

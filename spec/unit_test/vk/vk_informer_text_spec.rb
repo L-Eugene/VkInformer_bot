@@ -3,7 +3,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Vk::Textual do
-  before(:all) do
+  before :all do
     @obj = Vk::Textual.new(
       'x',
       load_json_fix(

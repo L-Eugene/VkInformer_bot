@@ -3,7 +3,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Vk::Stat do
-  before(:each) do
+  before :each do
     @stat = FactoryBot.create(:stat, count: 6)
   end
 

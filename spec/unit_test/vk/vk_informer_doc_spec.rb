@@ -2,19 +2,19 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Vk::Link do
-  before :all do
-    @obj = Vk::Link.new(
+describe Vk::Doc do
+  before :each do
+    @obj = Vk::Doc.new(
       'x',
       load_json_fix(
-        File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/link/hash.wo_prev.json'
+        File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/doc/hash.simple.json'
       )
     )
 
-    @obj2 = Vk::Link.new(
+    @obj2 = Vk::Doc.new(
       'x',
       load_json_fix(
-        File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/link/hash.w_prev.json'
+        File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/doc/hash.gif.json'
       )
     )
   end
@@ -24,17 +24,22 @@ describe Vk::Link do
       expect(@obj).to respond_to(:to_hash, :use_method)
     end
 
-    it 'should use send_message API call if no preview given' do
+    it 'should use send_message API call if file is not gif' do
       expect(@obj.use_method).to eq :send_message
     end
 
-    it 'should use send_photo API call if preview given' do
-      expect(@obj2.use_method).to eq :send_photo
+    it 'should use send_doc API call if file is gif' do
+      expect(@obj2.use_method).to eq :send_doc
     end
   end
 
   describe 'Hash build' do
-    it 'should build result hash for link without peview' do
+    before :each do
+      stub_request(:get, 'http://example.com/file.gif')
+        .to_return(status: 200, body: '', headers: {})
+    end
+
+    it 'should build result hash for doc if file is not gif' do
       h = @obj.to_hash
       expect(h).to be_instance_of(Hash)
       expect(h).to have_key(:text)
@@ -45,9 +50,7 @@ describe Vk::Link do
     it 'should build result hash for link with peview' do
       h = @obj2.to_hash
       expect(h).to be_instance_of(Hash)
-      expect(h).to have_key(:type)
-      expect(h[:type]).to eq 'photo'
-      expect(h).to have_key(:media)
+      expect(h).to have_key(:document)
       expect(h).to have_key(:caption)
       expect(h).to have_key(:parse_mode)
     end

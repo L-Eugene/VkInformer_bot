@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Vk::Chat do
   describe 'Basic' do
-    before(:each) do
+    before :each do
       @chat = FactoryBot.create(:chat)
     end
 
@@ -22,7 +22,7 @@ describe Vk::Chat do
   end
 
   describe 'Wall list processing' do
-    before(:each) do
+    before :each do
       @chat = FactoryBot.create(:chat)
     end
 

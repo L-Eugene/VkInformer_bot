@@ -1,0 +1,10 @@
+{
+  "type": "doc",
+  "doc": {
+    "id": 123456,
+    "owner_id": 123,
+    "title": "file.txt",
+    "ext": "txt",
+    "url": "http://example.com/file.txt"
+  }
+}

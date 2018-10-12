@@ -1,0 +1,19 @@
+{
+  "type": "album",
+  "album": {
+    "id": 12456,
+    "owner_id": 123,
+    "thumb": {
+      "id": 23456,
+      "album_id": 12456,
+      "owner_id": 123,
+      "photo_75": "http://example.com/photo75.jpg",
+      "photo_130": "http://example.com/photo75.jpg",
+      "photo_604": "http://example.com/photo75.jpg",
+      "photo_807": "http://example.com/photo75.jpg",
+      "photo_1280": "http://example.com/photo75.jpg"
+    },
+    "title": "Album title",
+    "description": "Album description"
+  }
+}

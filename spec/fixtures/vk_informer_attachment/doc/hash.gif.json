@@ -1,0 +1,10 @@
+{
+  "type": "doc",
+  "doc": {
+    "id": 123456,
+    "owner_id": 123,
+    "title": "file.gif",
+    "ext": "gif",
+    "url": "http://example.com/file.gif"
+  }
+}
