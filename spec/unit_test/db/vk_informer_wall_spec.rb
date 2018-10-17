@@ -10,7 +10,7 @@ describe Vk::Wall do
 
     it 'should provide needed attributes' do
       # Database fields
-      expect(@wall).to respond_to(:id, :wall_id, :domain, :last_message_id)
+      expect(@wall).to respond_to(:id, :domain, :last_message_id)
 
       # Relations
       expect(@wall).to respond_to(:cwlinks, :chats)
