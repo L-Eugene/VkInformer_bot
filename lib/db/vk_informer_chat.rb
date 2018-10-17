@@ -108,14 +108,13 @@ module Vk
     end
 
     def split_message(text)
-      result = []
-      s = ''
-      text.split("\n").each do |p|
-        result << s if s.length + p.length > MAX_LENGTH
-        s = (s.length + p.length) > MAX_LENGTH ? p : "#{s}\n#{p}"
+      text.split("\n").each_with_object([+'']) do |str, arr|
+        if str.length + arr.last.length > MAX_LENGTH
+          arr << str
+        else
+          arr.last << "#{str}\n"
+        end
       end
-      result << s unless s.empty?
-      result
     end
   end
 end
