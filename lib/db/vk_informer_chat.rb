@@ -8,6 +8,8 @@ module Vk
     has_many :cwlinks
     has_many :walls, through: :cwlinks
 
+    validates :chat_id, numericality: { only_integer: true }
+
     # Maximum walls can be watched in one chat
     WATCH_LIMIT = 10
     # Maximal telegram message length
