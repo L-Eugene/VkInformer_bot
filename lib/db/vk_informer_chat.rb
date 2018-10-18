@@ -110,7 +110,7 @@ module Vk
     def split_message(text)
       text.split("\n").each_with_object([+'']) do |str, arr|
         if str.length + arr.last.length > MAX_LENGTH
-          arr << str
+          arr << +"#{str}\n"
         else
           arr.last << "#{str}\n"
         end

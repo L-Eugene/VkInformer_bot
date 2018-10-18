@@ -23,6 +23,9 @@ describe Vk::Chat do
     it 'should split long messages right' do
       expect(@chat.send(:split_message, '123')).to contain_exactly("123\n")
 
+      long_message = 'x' * Vk::Chat::MAX_LENGTH
+      expect(@chat.send(:split_message, "#{long_message}\n321")).to contain_exactly("#{long_message}\n", "321\n")
+
       length = Vk::Chat::MAX_LENGTH * 2 / 400 + 2
       long_message = length.downto(0).each_with_object(+'') do |_i, s|
         s << 'i' * 400 << "\n"
