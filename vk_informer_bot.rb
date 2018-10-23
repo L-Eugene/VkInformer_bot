@@ -105,17 +105,17 @@ class VkInformerBot
     msg.gsub(preg, '').gsub(%r{\s+}m, ' ').strip.split(' ')
   end
 
-  def cmd_start(_msg, _args)
+  def cmd_start(_args)
     chat.send_text 'Enabling this chat' unless chat.enabled?
     chat.update_attribute(:enabled, true)
   end
 
-  def cmd_stop(_msg, _args)
+  def cmd_stop(_args)
     chat.send_text 'Disabling this chat' if chat.enabled?
     chat.update_attribute(:enabled, false)
   end
 
-  def cmd_add(_msg, args)
+  def cmd_add(args)
     group = Vk::Wall.find_or_create_by(domain: args.first)
     chat.add group
     gdomain = Vk::Tlg.escape(group.domain)
@@ -123,7 +123,7 @@ class VkInformerBot
     chat.send_text "Added http://vk.com/#{gdomain} to your watchlist"
   end
 
-  def cmd_delete(_msg, args)
+  def cmd_delete(args)
     domain = args.first
     group = Vk::Wall.find_by(domain: domain)
     chat.delete group
@@ -131,11 +131,11 @@ class VkInformerBot
     chat.send_text "Removed http://vk.com/#{gdomain} from watchlist"
   end
 
-  def cmd_list(_msg, _args)
+  def cmd_list(_args)
     chat.send_text chat.status, 'HTML'
   end
 
-  def cmd_help(_msg, _args)
+  def cmd_help(_args)
     chat.send_text HELP_MESSAGE, 'HTML'
   end
 
