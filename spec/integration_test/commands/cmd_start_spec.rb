@@ -14,7 +14,7 @@ describe VkInformerBot do
     it 'should enable disabled chat' do
       expect(@chat.reload.enabled).to be false
       expect(@chat).to receive(:send_message)
-      expect { @vk.send(:cmd_start, '/start') }.not_to raise_error
+      expect { @vk.send(:cmd_start, '/start', []) }.not_to raise_error
       expect(@chat.reload.enabled).to be true
     end
 
@@ -23,7 +23,7 @@ describe VkInformerBot do
 
       expect(@chat.reload.enabled).to be true
       expect(@chat).not_to receive(:send_message)
-      expect { @vk.send(:cmd_start, '/start') }.not_to raise_error
+      expect { @vk.send(:cmd_start, '/start', []) }.not_to raise_error
       expect(@chat.reload.enabled).to be true
     end
   end

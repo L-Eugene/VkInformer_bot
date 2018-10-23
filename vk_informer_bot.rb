@@ -50,13 +50,11 @@ class VkInformerBot
     update = Telegram::Bot::Types::Update.new(data)
     message = update.message
 
-    return if message.nil?
-
-    @chat = Vk::Chat.find_or_create_by(chat_id: message.chat.id)
-
-    meth = method_from_message(message.text)
-
-    send(meth, message.text) if respond_to? meth.to_sym, true
+    process_message(message) unless message.nil?
+  rescue Vk::ErrorBase
+    $ERROR_INFO.process
+  rescue StandardError
+    Vk.log.error "#{$ERROR_INFO.message}\n#{$ERROR_INFO.backtrace.join("\n")}"
   end
 
   def scan
@@ -69,6 +67,8 @@ class VkInformerBot
     end
 
     log.info 'Finish scan'
+
+    cleanup
   end
 
   private
@@ -82,6 +82,15 @@ class VkInformerBot
     <strong>/list</strong> - Show the list of watched groups.
   TEXT
 
+  def process_message(message)
+    @chat = Vk::Chat.find_or_create_by(chat_id: message.chat.id)
+
+    meth = method_from_message(message.text)
+    args = parse_args(%r{^\/\w+\s?}, message.text)
+
+    send(meth, args) if respond_to? meth.to_sym, true
+  end
+
   def method_from_message(text)
     meth = (text || '').downcase
     [%r{\@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
@@ -92,50 +101,45 @@ class VkInformerBot
     "cmd_#{meth}"
   end
 
-  def cmd_start(_msg)
+  def parse_args(preg, msg)
+    msg.gsub(preg, '').gsub(%r{\s+}m, ' ').strip.split(' ')
+  end
+
+  def cmd_start(_msg, _args)
     chat.send_text 'Enabling this chat' unless chat.enabled?
     chat.update_attribute(:enabled, true)
   end
 
-  def cmd_stop(_msg)
+  def cmd_stop(_msg, _args)
     chat.send_text 'Disabling this chat' if chat.enabled?
     chat.update_attribute(:enabled, false)
   end
 
-  def cmd_add(msg)
-    group = Vk::Wall.find_or_create_by(domain: msg.sub(%r{/add\s*}, ''))
-    do_add group
-  rescue StandardError
-    log.error "Cannot add #{group.domain}. Error: #{$ERROR_INFO}"
-    chat.send_text $ERROR_INFO.to_chat if $ERROR_INFO.respond_to? 'to_chat'
-  ensure
-    Vk::Wall.where(last_message_id: nil).delete_all
-  end
-
-  def cmd_delete(msg)
-    domain = msg.sub(%r{/delete\s*}, '')
-    group = Vk::Wall.find_by(domain: domain)
-    chat.delete group
-  rescue StandardError => error
-    log.error "Cannot remove #{domain}. Error: #{error}"
-    chat.send_text(error.to_chat) if error.respond_to? 'to_chat'
-  else
-    gdomain = Vk::Tlg.escape domain
-    chat.send_text "Removed http://vk.com/#{gdomain} from watchlist"
-  end
-
-  def cmd_list(_msg)
-    chat.send_text chat.status, 'HTML'
-  end
-
-  def cmd_help(_msg)
-    chat.send_text HELP_MESSAGE, 'HTML'
-  end
-
-  def do_add(group)
+  def cmd_add(_msg, args)
+    group = Vk::Wall.find_or_create_by(domain: args.first)
     chat.add group
     gdomain = Vk::Tlg.escape(group.domain)
     log.info "Added http://vk.com/#{gdomain} to chat:#{chat.chat_id}."
     chat.send_text "Added http://vk.com/#{gdomain} to your watchlist"
+  end
+
+  def cmd_delete(_msg, args)
+    domain = args.first
+    group = Vk::Wall.find_by(domain: domain)
+    chat.delete group
+    gdomain = Vk::Tlg.escape domain
+    chat.send_text "Removed http://vk.com/#{gdomain} from watchlist"
+  end
+
+  def cmd_list(_msg, _args)
+    chat.send_text chat.status, 'HTML'
+  end
+
+  def cmd_help(_msg, _args)
+    chat.send_text HELP_MESSAGE, 'HTML'
+  end
+
+  def cleanup
+    Vk::Wall.where(last_message_id: nil).delete_all
   end
 end

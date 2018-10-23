@@ -1,40 +1,69 @@
 # frozen_string_literal: true
 
+require 'exceptions/vk_informer_error_base'
+
 module Vk
   # No such group exception
-  class NoSuchGroup < StandardError
-    attr_reader :to_chat
+  class NoSuchGroup < Vk::ErrorBase
+    private
 
-    def initialize
-      @to_chat = 'No such group.'
-      super('Group not found.')
+    def default_message
+      'Group not found'
+    end
+
+    def default_cmessage
+      'No such group'
+    end
+
+    def log_level
+      :info
     end
   end
 
   # Incorrect group exception
-  class IncorrectGroup < StandardError
-    attr_reader :to_chat
+  class IncorrectGroup < Vk::ErrorBase
+    private
 
-    def initialize(w)
-      @to_chat = "Group https://vk.com/#{w.domain} is invalid."
-      super "Error receiving group #{w.domain}"
+    def default_message
+      "Error receiving group #{@data&.domain}"
+    end
+
+    def default_cmessage
+      "Group https://vk.com/#{@data&.domain} is invalid."
+    end
+
+    def log_level
+      :info
     end
   end
 
   # Too much groups exception
-  class TooMuchGroups < StandardError
-    def message
+  class TooMuchGroups < Vk::ErrorBase
+    private
+
+    def default_message
+      "Chat #{@chat&.chat_id} is already watching maximal amount of groups."
+    end
+
+    def default_cmessage
       'Chat is already watching maximal amount of groups.'
+    end
+
+    def log_level
+      :info
     end
   end
 
   # Already watching exception
-  class AlreadyWatching < StandardError
-    attr_reader :to_chat
+  class AlreadyWatching < Vk::ErrorBase
+    private
 
-    def initialize(w)
-      @wall = "You are already watching https://vk.com/#{w.domain}"
-      super "Chat is already watching group #{w.domain}"
+    def default_message
+      "Chat #{@chat&.chat_id} is already watching group #{@data.domain}"
+    end
+
+    def default_cmessage
+      "You are already watching https://vk.com/#{@data.domain}"
     end
   end
 end

@@ -39,14 +39,14 @@ module Vk
     end
 
     def add(wall)
-      raise Vk::IncorrectGroup, wall unless wall.correct?
-      raise Vk::TooMuchGroups if full?
-      raise Vk::AlreadyWatching, wall if watching? wall
+      raise Vk::IncorrectGroup, data: wall, chat: self unless wall.correct?
+      raise Vk::TooMuchGroups, chat: self if full?
+      raise Vk::AlreadyWatching, data: wall, chat: self if watching? wall
       walls << wall
     end
 
     def delete(wall)
-      raise Vk::NoSuchGroup if wall.nil?
+      raise Vk::NoSuchGroup, chat: self if wall.nil?
       walls.delete wall
     end
 
