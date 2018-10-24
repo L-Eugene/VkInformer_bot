@@ -13,7 +13,7 @@ module Vk
       @text = <<~TEXT
         #{domain_prefix domain}:
         Poll: #{normalize_text(node[:poll][:question])}
-        #{node[:poll][:answers].map { |a| "- #{a[:text]}" }.join("\n")}
+        #{node[:poll][:answers].map { |a| "🔹 #{a[:text]}" }.join("\n")}
       TEXT
     end
 
