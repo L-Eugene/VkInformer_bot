@@ -18,6 +18,13 @@ module Vk
     def self.escape(text)
       text.gsub('*', '\*').gsub('_', '\_')
     end
+
+    def self.available?
+      Vk.tlg.api.get_me['ok']
+    rescue StandardError
+      Vk.log.error "#{$ERROR_INFO.message}\n#{$ERROR_INFO.backtrace.join("\n")}"
+      false
+    end
   end
 
   def self.tlg

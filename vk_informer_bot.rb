@@ -60,6 +60,8 @@ class VkInformerBot
   def scan
     log.info 'Starting scan'
 
+    return unless Vk::Tlg.available?
+
     Vk::Wall.find_each do |wall|
       run = wall.watched?
       wall.process if run
