@@ -22,4 +22,4 @@ end
 
 load 'active_record/railties/databases.rake'
 
-task default: ['db:migrate', 'rubocop', 'spec']
+task default: ['rubocop', 'db:migrate', 'spec']
