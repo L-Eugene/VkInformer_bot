@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/L-Eugene/VkInformer_bot.svg?branch=master)](https://travis-ci.com/L-Eugene/VkInformer_bot)
+
 Rake commands:
 
 rake vk:db:migrate
