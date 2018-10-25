@@ -43,13 +43,29 @@ describe Vk::Link do
     end
 
     it 'should build result hash for link with peview' do
+      # Object with big image
       h = @obj2.to_hash
       expect(h).to be_instance_of(Hash)
       expect(h).to have_key(:type)
       expect(h[:type]).to eq 'photo'
       expect(h).to have_key(:media)
+      expect(h[:media]).to eq 'http://example.com/image.jpg'
       expect(h).to have_key(:caption)
       expect(h).to have_key(:parse_mode)
+
+      # Object without big image
+      obj3 = Vk::Link.new(
+        'x',
+        load_json_fix(
+          File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/link/hash.w_prev.small.json'
+        )
+      )
+      h = obj3.to_hash
+      expect(h).to be_instance_of(Hash)
+      expect(h).to have_key(:type)
+      expect(h[:type]).to eq 'photo'
+      expect(h).to have_key(:media)
+      expect(h[:media]).to eq 'http://example.com/image.small.jpg'
     end
   end
 end
