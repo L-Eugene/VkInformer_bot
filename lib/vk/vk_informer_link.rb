@@ -11,7 +11,7 @@ module Vk
       super
 
       @text = "[#{node[:link][:title]}](#{node[:link][:url]})"
-      @preview = node[:link][:image_src] if node[:link].key? :image_src
+      @preview = get_image(node) if node[:link].key? :image_src
     end
 
     def to_hash
@@ -31,6 +31,10 @@ module Vk
 
     def preview?
       @preview
+    end
+
+    def get_image(node)
+      node[:link][node[:link].key?(:image_big) ? :image_big : :image_src]
     end
 
     def to_hash_text
