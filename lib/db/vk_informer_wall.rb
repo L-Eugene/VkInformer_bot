@@ -16,6 +16,7 @@ module Vk
 
     def correct?
       return false unless (data = hash_load)
+
       update_attribute(:last_message_id, lmi(data)) if last_message_id.nil?
       update_attribute(:wall_id, wid(data)) if wall_id.nil?
       true
@@ -34,6 +35,7 @@ module Vk
 
     def update_last(records = new_messages)
       return if records.empty?
+
       last_value = lmi(records)
       Vk.log.info " +++ Updating last for #{domain} (#{last_value})"
       update_attribute(:last_message_id, last_value)
@@ -68,9 +70,11 @@ module Vk
 
     def hash_load
       return false unless (response = http_load)
+
       data = JSON.parse(response.body, symbolize_names: true)
 
       raise "VK API: #{data[:error][:error_msg]}" if data.key? :error
+
       data[:response][:items]
     rescue StandardError
       Vk.log.error 'Error while parsing JSON response from VK.COM.'
@@ -80,6 +84,7 @@ module Vk
 
     def new_messages
       return [] unless (data = hash_load)
+
       data.select  { |msg| msg[:id].to_i > last_message_id }
           .sort_by { |msg| msg[:id].to_i }
           .map do |msg|

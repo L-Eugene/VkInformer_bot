@@ -27,6 +27,7 @@ module Vk
 
     def watching?(wall)
       return false if wall.nil?
+
       walls.any? { |w| w.domain == wall.domain }
     end
 
@@ -40,13 +41,17 @@ module Vk
 
     def add(wall)
       raise Vk::IncorrectGroup, data: wall, chat: self unless wall.correct?
+
       raise Vk::TooMuchGroups, chat: self if full?
+
       raise Vk::AlreadyWatching, data: wall, chat: self if watching? wall
+
       walls << wall
     end
 
     def delete(wall)
       raise Vk::NoSuchGroup, chat: self if wall.nil?
+
       walls.delete wall
     end
 
@@ -77,15 +82,16 @@ module Vk
       print_error $ERROR_INFO
     end
 
-    def send_media(b)
-      return send_photo b.first if b.size == 1
-      Vk.tlg.api.send_media_group(chat_id: chat_id, media: b.to_json)
+    def send_media(batch)
+      return send_photo batch.first if batch.size == 1
+
+      Vk.tlg.api.send_media_group(chat_id: chat_id, media: batch.to_json)
     rescue StandardError
       print_error $ERROR_INFO
     end
 
-    def send_doc(d)
-      Vk.tlg.api.send_document(d.merge(chat_id: chat_id))
+    def send_doc(doc)
+      Vk.tlg.api.send_document(doc.merge(chat_id: chat_id))
     rescue StandardError
       print_error $ERROR_INFO
     end
@@ -101,10 +107,10 @@ module Vk
 
     private
 
-    def print_error(e)
-      Vk.log.error e.message
-      Vk.log.error e.backtrace.join("\n")
-      update!(enabled: false) if e.message.include? 'was blocked by the user'
+    def print_error(err)
+      Vk.log.error err.message
+      Vk.log.error err.backtrace.join("\n")
+      update!(enabled: false) if err.message.include? 'was blocked by the user'
     end
 
     def split_message(text)

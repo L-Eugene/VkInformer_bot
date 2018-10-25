@@ -18,6 +18,7 @@ module Vk
 
     def to_hash
       return gif_hash if gif?
+
       {
         text: "[#{title}](#{url})",
         disable_web_page_preview: false
@@ -45,7 +46,7 @@ module Vk
     end
 
     def gif?
-      @is_gif ||= title.gsub(%r{\?.*$}, '') =~ %r{\.gif$} || @ext == 'gif'
+      @gif ||= title.gsub(%r{\?.*$}, '') =~ %r{\.gif$} || @ext == 'gif'
     end
   end
 end

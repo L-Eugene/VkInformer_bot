@@ -24,6 +24,7 @@ module Vk
 
     def parse_attachments(node)
       return unless node.key? :attachments
+
       node[:attachments].each do |a|
         supported = valid_attachment? a[:type]
         data << attachment(a[:type]).new(domain, a) if supported
@@ -37,7 +38,7 @@ module Vk
     end
 
     def compact_photos
-      t = @data.select { |p| p.use_method == :send_photo }
+      t = @data.select { |photo| photo.use_method == :send_photo }
                .in_groups_of(10, false).map do |block|
         block.size > 1 ? Vk::MediaGroup.new(block) : block.first
       end

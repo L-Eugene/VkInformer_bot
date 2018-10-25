@@ -20,6 +20,7 @@ module Vk
 
     def to_hash
       return nil unless media
+
       {
         type: 'photo',
         media: @file_id || media,

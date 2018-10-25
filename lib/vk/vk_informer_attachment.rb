@@ -30,14 +30,17 @@ module Vk
     def domain_prefix(domain, type = :markdown)
       d = domain.tr('.', '_')
       dn = normalize_text d
+
       return "[#{domain}](https://vk.com/#{domain}) ##{dn}" if type == :markdown
+
       return "https://vk.com/#{domain} ##{d}" if type == :plain
+
       "<a href='https://vk.com/#{domain}'>#{domain}</a> ##{d}"
     end
 
-    def get_album_image(a)
-      k = %w[1280 807 604 130 75].find { |x| a.key? "photo_#{x}".to_sym }
-      k.nil? ? nil : a["photo_#{k}".to_sym]
+    def get_album_image(obj)
+      k = %w[1280 807 604 130 75].find { |x| obj.key? "photo_#{x}".to_sym }
+      k.nil? ? nil : obj["photo_#{k}".to_sym]
     end
   end
 end
