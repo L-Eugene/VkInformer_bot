@@ -6,9 +6,13 @@ require 'telegram/bot'
 require 'faraday'
 require 'json'
 require 'yaml'
+require 'r18n-core'
+require 'r18n-rails-api'
 
 # VK informer module
 module Vk
+  include R18n::Helpers
+
   # Config singleton
   class Config
     include Singleton
@@ -37,8 +41,13 @@ require 'telegram/vk_informer_classes'
 require 'db/vk_informer_model'
 Dir['vk/*.rb'].each { |f| require f }
 
+R18n.default_places = "#{Vk.cfg.options['libdir']}/../i18n/"
+R18n.set('en')
+
 # Main bot class
 class VkInformerBot
+  include R18n::Helpers
+
   attr_reader :token, :client, :log, :chat
 
   def initialize
@@ -58,31 +67,18 @@ class VkInformerBot
   end
 
   def scan
-    log.info 'Starting scan'
+    log.info t.scan.start
 
     return unless Vk::Tlg.available?
 
-    Vk::Wall.find_each do |wall|
-      run = wall.watched?
-      wall.process if run
-      wall.update_last unless run
-    end
+    Vk::Wall.process
 
-    log.info 'Finish scan'
+    log.info t.scan.finish
 
     cleanup
   end
 
   private
-
-  HELP_MESSAGE = <<~TEXT
-    <strong>/help</strong>  - Print this help message.
-    <strong>/start</strong> - Start watching.
-    <strong>/stop</strong>  - Pause watching (list of watched groups are not deleted).
-    <strong>/add</strong> <em>domain</em> - Add group to watch list. <em>Domain</em> is human-readable group identifier.
-    <strong>/delete</strong> <em>domain</em> - Delete group from watch list. <em>Domain</em> is the same as in <strong>/add</strong> command.
-    <strong>/list</strong> - Show the list of watched groups.
-  TEXT
 
   def process_message(message)
     @chat = Vk::Chat.find_or_create_by(chat_id: message.chat.id)
@@ -97,8 +93,11 @@ class VkInformerBot
     meth = (text || '').downcase
     [%r{\@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
 
-    log.info "#{meth} command from #{chat.chat_id}"
-    log.debug "Full command is #{text}"
+    log.info t.log.command(
+      method: meth,
+      chat: chat.chat_id,
+      text: text
+    )
 
     "cmd_#{meth}"
   end
@@ -108,29 +107,26 @@ class VkInformerBot
   end
 
   def cmd_start(_args)
-    chat.send_text 'Enabling this chat' unless chat.enabled?
+    chat.send_text t.chat.enable unless chat.enabled?
     chat.update_attribute(:enabled, true)
   end
 
   def cmd_stop(_args)
-    chat.send_text 'Disabling this chat' if chat.enabled?
+    chat.send_text t.chat.disable if chat.enabled?
     chat.update_attribute(:enabled, false)
   end
 
   def cmd_add(args)
     group = Vk::Wall.find_or_create_by(domain: args.first)
     chat.add group
-    gdomain = Vk::Tlg.escape(group.domain)
-    log.info "Added http://vk.com/#{gdomain} to chat:#{chat.chat_id}."
-    chat.send_text "Added http://vk.com/#{gdomain} to your watchlist"
+    log.info t.log.added(domain: group.domain_escaped, chat: chat.chat_id)
   end
 
   def cmd_delete(args)
     domain = args.first
     group = Vk::Wall.find_by(domain: domain)
     chat.delete group
-    gdomain = Vk::Tlg.escape domain
-    chat.send_text "Removed http://vk.com/#{gdomain} from watchlist"
+    log.info t.log.deleted(domain: group.domain_escaped, chat: chat.chat_id)
   end
 
   def cmd_list(_args)
@@ -138,7 +134,7 @@ class VkInformerBot
   end
 
   def cmd_help(_args)
-    chat.send_text HELP_MESSAGE, 'HTML'
+    chat.send_text t.help, 'HTML'
   end
 
   def cleanup

@@ -32,11 +32,10 @@ module Vk
     end
 
     def status
-      <<~TEXT
-        <b>Status</b>: #{enabled ? 'enabled' : 'disabled'}
-        <b>Watching</b>:
-        #{walls.pluck(:domain).join("\n")}
-      TEXT
+      t.chat.status(
+        enabled: enabled? ? 'enabled' : 'disabled',
+        list: walls.pluck(:domain).join("\n")
+      )
     end
 
     def add(wall)
@@ -47,12 +46,14 @@ module Vk
       raise Vk::AlreadyWatching, data: wall, chat: self if watching? wall
 
       walls << wall
+      send_text t.chat.added(domain: wall.domain_escaped)
     end
 
     def delete(wall)
       raise Vk::NoSuchGroup, chat: self if wall.nil?
 
       walls.delete wall
+      send_text t.chat.delete(domain: wall.domain_escaped)
     end
 
     def send_message(hash, parse_mode = 'Markdown')
@@ -97,11 +98,10 @@ module Vk
     end
 
     def send_post(post)
-      Vk.log.info "Sending #{post.message_id} to #{chat_id}"
+      Vk.log.info t.chat.send(message: post.message_id, chat: chat_id)
       post.data.each do |p|
         response = send(p.use_method, p.to_hash)
-        response = response['result'] if response.is_a? Hash
-        p.result response
+        p.result response.dig('result')
       end
     end
 

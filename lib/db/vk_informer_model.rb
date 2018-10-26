@@ -7,6 +7,11 @@ require 'log/vk_informer_logger'
 module Vk
   # Default active record class
   class VkInformerBase < ActiveRecord::Base
+    include R18n::Helpers
+    class << self
+      include R18n::Helpers
+    end
+
     self.abstract_class = true
 
     establish_connection(Vk.cfg.options['database'])

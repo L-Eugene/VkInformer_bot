@@ -22,23 +22,40 @@ module Vk
       true
     end
 
+    def send_message(msg)
+      post = Vk::Post.new msg, self
+      Vk.log.info t.wall.send(message: post.message_id)
+      chats.each { |chat| chat.send_post(post) if chat.enabled? }
+    end
+
     def process
-      Vk.log.info " ++ Processing #{domain}."
+      Vk.log.info t.wall.process(domain: domain_escaped)
       records = new_messages
-      records.each do |msg|
-        post = Vk::Post.new msg, self
-        Vk.log.info " +++ Sending #{post.message_id}."
-        chats.each { |chat| chat.send_post(post) if chat.enabled? }
-      end
+      records.each { |msg| send_msg(msg) }
       update_last records
     end
 
     def update_last(records = new_messages)
       return if records.empty?
 
+      Vk.log.info t.wall.last(domain: domain_escaped, last: last_value)
       last_value = lmi(records)
-      Vk.log.info " +++ Updating last for #{domain} (#{last_value})"
+
       update_attribute(:last_message_id, last_value)
+    end
+
+    def domain_escaped
+      Vk::Tlg.escape domain
+    end
+
+    def self.process
+      find_each do |wall|
+        if wall.watched?
+          wall.process
+        else
+          wall.update_last
+        end
+      end
     end
 
     private
@@ -64,21 +81,24 @@ module Vk
         access_token: Vk::Token.best.key
       )
     rescue Faraday::Error
-      Vk.log.error "Could not connect to VK.COM. (#{$ERROR_INFO.message})"
+      Vk.log.error t.error.vk_connection(message: $ERROR_INFO.message)
       false
+    end
+
+    def parse_json(body)
+      data = JSON.parse(body, symbolize_names: true)
+
+      raise t.error.vk_api(error: data[:error][:error_msg]) if data.key? :error
+
+      data[:response][:items]
     end
 
     def hash_load
       return false unless (response = http_load)
 
-      data = JSON.parse(response.body, symbolize_names: true)
-
-      raise "VK API: #{data[:error][:error_msg]}" if data.key? :error
-
-      data[:response][:items]
+      parse_json(response.body)
     rescue StandardError
-      Vk.log.error 'Error while parsing JSON response from VK.COM.'
-      Vk.log.error $ERROR_INFO.message
+      Vk.log.error t.error.json_parse(message: $ERROR_INFO.message)
       false
     end
 

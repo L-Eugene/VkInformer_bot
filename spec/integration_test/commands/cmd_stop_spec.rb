@@ -13,7 +13,8 @@ describe VkInformerBot do
 
     it 'should disable enabled chat' do
       expect(@chat.reload.enabled).to be true
-      expect(@chat).to receive(:send_message)
+      expect(@chat)
+        .to receive(:send_message).with(hash_including(text: 'Disabling this chat'))
       expect { @vk.send(:cmd_stop, []) }.not_to raise_error
       expect(@chat.reload.enabled).to be false
     end

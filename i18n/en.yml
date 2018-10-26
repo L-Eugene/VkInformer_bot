@@ -1,0 +1,59 @@
+help: |-
+  <strong>/help</strong>  - Print this help message.
+  <strong>/start</strong> - Start watching.
+  <strong>/stop</strong>  - Pause watching (list of watched groups are not deleted).
+  <strong>/add</strong> <em>domain</em> - Add group to watch list. <em>Domain</em> is human-readable group identifier.
+  <strong>/delete</strong> <em>domain</em> - Delete group from watch list. <em>Domain</em> is the same as in <strong>/add</strong> command.
+  <strong>/list</strong> - Show the list of watched groups.
+log:
+  command: |-
+    %{method} command from %{chat}
+    Full command is: %{text}
+  added: |-
+    Added https://vk.com/%{domain} to chat:%{chat}
+  deleted: |-
+    Deleted https://vk.com/%{domain} from chat:%{chat}
+chat:
+  enable: Enabling this chat
+  disable: Disabling this chat
+  added: Added http://vk.com/%{domain} to your watchlist
+  removed: Removed http://vk.com/%{domain} from watchlist
+  send: Sending %{message} to %{chat}
+  status: |-
+    <b>Status</b>: %{enabled}
+    <b>Watching</b>:
+    %{list}
+wall:
+  process: ++ Processing %{domain}.
+  send: +++ Sending %{message}.
+  last: +++ Updating last for %{domain} (%{last})
+token:
+  select: +++ Selected VK token #%{id}
+scan:
+  start: Starting scan
+  finish: Finish scan
+error:
+  vk_connection: Could not connect to VK.COM. (%{message})
+  vk_api: VK API. %{error}
+  json_parse: |-
+    Error while parsing JSON response from VK.COM.
+    %{message}
+  unsupported: Unsupported attachment %{type}
+exception:
+  no_such_group:
+    message: Group not found
+    cmessage: No such group
+  incorrect_group:
+    message: Error receiving group %{domain}
+    cmessage: Group https://vk.com/%{domain} is invalid.
+  too_much_groups:
+    message: Chat %{chat} is already watching maximal amount of groups.
+    cmessage: This chat is already watching maximal amount of groups.
+  already_watching:
+    message: Chat %{chat} is already watching group %{domain}
+    cmessage: You are already watching https://vk.com/%{domain}
+classes:
+  undefined: Should be defined in child class
+attachment:
+  poll:
+    poll: Опрос

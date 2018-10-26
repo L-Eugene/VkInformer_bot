@@ -8,11 +8,11 @@ module Vk
     private
 
     def default_message
-      'Group not found'
+      t.exception.no_such_group.message
     end
 
     def default_cmessage
-      'No such group'
+      t.exception.no_such_group.cmessage
     end
 
     def log_level
@@ -25,11 +25,11 @@ module Vk
     private
 
     def default_message
-      "Error receiving group #{@data&.domain}"
+      t.exception.incorrect_group.message(domain: @data&.domain)
     end
 
     def default_cmessage
-      "Group https://vk.com/#{@data&.domain} is invalid."
+      t.exception.incorrect_group.cmessage(domain: @data&.domain)
     end
 
     def log_level
@@ -42,11 +42,11 @@ module Vk
     private
 
     def default_message
-      "Chat #{@chat&.chat_id} is already watching maximal amount of groups."
+      t.exception.too_much_groups.message(chat: @chat&.chat_id)
     end
 
     def default_cmessage
-      'Chat is already watching maximal amount of groups.'
+      t.exception.too_much_groups.cmessage
     end
 
     def log_level
@@ -59,11 +59,14 @@ module Vk
     private
 
     def default_message
-      "Chat #{@chat&.chat_id} is already watching group #{@data.domain}"
+      t.exception.already_watching.message(
+        chat: @chat&.chat_id,
+        domain: @data.domain
+      )
     end
 
     def default_cmessage
-      "You are already watching https://vk.com/#{@data.domain}"
+      t.exception.already_watching.cmessage(domain: @data.domain)
     end
   end
 end

@@ -33,6 +33,8 @@ module Vk
     end
 
     def result(hash)
+      return unless hash.is_a? Hash
+
       @file_id = hash['photo'].last['file_id']
     end
   end

@@ -25,11 +25,7 @@ module Vk
     def parse_attachments(node)
       return unless node.key? :attachments
 
-      node[:attachments].each do |a|
-        supported = valid_attachment? a[:type]
-        data << attachment(a[:type]).new(domain, a) if supported
-        Vk.log.info "Unsupported attachment #{a[:type]}" unless supported
-      end
+      node[:attachments].each { |a| add_attachment(a) }
     end
 
     def valid_attachment?(name)
@@ -49,6 +45,14 @@ module Vk
     def attachment(name)
       name = name.downcase.capitalize
       Vk.const_get(name) if Vk.const_defined?(name)
+    end
+
+    def add_attachment(hash)
+      if valid_attachment? hash[:type]
+        data << attachment(hash[:type]).new(domain, hash)
+      else
+        Vk.log.info t.error.unsupported(type: hash[:type])
+      end
     end
   end
 

@@ -51,5 +51,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     DatabaseCleaner.clean
+    stub_request(:post, 'https://api.telegram.org/botsometoken/sendMessage')
+      .to_return(status: 200, body: '', headers: {})
   end
 end

@@ -6,6 +6,8 @@ gem 'activerecord'
 gem 'faraday'
 gem 'faraday_middleware'
 gem 'mysql2'
+gem 'r18n-core'
+gem 'r18n-rails-api'
 gem 'telegram-bot-ruby'
 
 group :test do
