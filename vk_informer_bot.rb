@@ -71,6 +71,8 @@ class VkInformerBot
   end
 
   def scan
+    cleanup
+
     log.info t.scan.start
 
     return unless Vk::Tlg.available?
@@ -78,8 +80,6 @@ class VkInformerBot
     Vk::Wall.process
 
     log.info t.scan.finish
-
-    cleanup
   end
 
   private
