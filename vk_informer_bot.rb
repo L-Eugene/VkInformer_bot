@@ -41,7 +41,11 @@ require 'telegram/vk_informer_classes'
 require 'db/vk_informer_model'
 Dir['vk/*.rb'].each { |f| require f }
 
-R18n.default_places = "#{Vk.cfg.options['libdir']}/../i18n/"
+R18n.default_places = File.join(
+  File.dirname(__FILE__),
+  Vk.cfg.options['libdir'],
+  '../i18n/'
+)
 R18n.set('en')
 
 # Main bot class
