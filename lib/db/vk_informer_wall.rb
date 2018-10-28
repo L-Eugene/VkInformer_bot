@@ -31,7 +31,7 @@ module Vk
     def process
       Vk.log.info t.wall.process(domain: domain_escaped)
       records = new_messages
-      records.each { |msg| send_msg(msg) }
+      records.each { |msg| send_message(msg) }
       update_last records
     end
 
