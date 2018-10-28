@@ -28,7 +28,7 @@ module Vk
     def result(hash)
       return unless hash.is_a? Hash
 
-      @file_id = hash['document']['file_id'] if gif?
+      @file_id = hash.dig('result', 'document', 'file_id') if gif?
     end
 
     def use_method

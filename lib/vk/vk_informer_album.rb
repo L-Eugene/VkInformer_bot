@@ -35,7 +35,7 @@ module Vk
     def result(hash)
       return unless hash.is_a? Hash
 
-      @file_id = hash['photo'].last['file_id']
+      @file_id = hash.dig('result', 'photo').last['file_id']
     end
   end
 end
