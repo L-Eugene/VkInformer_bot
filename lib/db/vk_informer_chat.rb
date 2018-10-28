@@ -101,7 +101,7 @@ module Vk
       Vk.log.info t.chat.sending(message: post.message_id, chat: chat_id)
       post.data.each do |p|
         response = send(p.use_method, p.to_hash)
-        p.result response.dig('result')
+        p.result response.dig('result') if response.is_a? Hash
       end
     end
 
