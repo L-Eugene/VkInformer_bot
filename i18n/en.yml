@@ -25,7 +25,7 @@ chat:
     %{list}
 wall:
   process: ++ Processing %{domain}.
-  send: +++ Sending %{message}.
+  sending: +++ Sending %{message}.
   last: +++ Updating last for %{domain} (%{last})
 token:
   select: +++ Selected VK token #%{id}

@@ -24,7 +24,7 @@ module Vk
 
     def send_message(msg)
       post = Vk::Post.new msg, self
-      Vk.log.info t.wall.send(message: post.message_id)
+      Vk.log.info t.wall.sending(message: post.message_id)
       chats.each { |chat| chat.send_post(post) if chat.enabled? }
     end
 
