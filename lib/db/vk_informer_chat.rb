@@ -98,7 +98,7 @@ module Vk
     end
 
     def send_post(post)
-      Vk.log.info t.chat.send(message: post.message_id, chat: chat_id)
+      Vk.log.info t.chat.sending(message: post.message_id, chat: chat_id)
       post.data.each do |p|
         response = send(p.use_method, p.to_hash)
         p.result response.dig('result')

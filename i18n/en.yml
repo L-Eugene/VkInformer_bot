@@ -18,7 +18,7 @@ chat:
   disable: Disabling this chat
   added: Added http://vk.com/%{domain} to your watchlist
   removed: Removed http://vk.com/%{domain} from watchlist
-  send: Sending %{message} to %{chat}
+  sending: Sending %{message} to %{chat}
   status: |-
     <b>Status</b>: %{enabled}
     <b>Watching</b>:
