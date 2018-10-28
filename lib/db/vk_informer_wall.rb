@@ -38,8 +38,8 @@ module Vk
     def update_last(records = new_messages)
       return if records.empty?
 
-      Vk.log.info t.wall.last(domain: domain_escaped, last: last_value)
       last_value = lmi(records)
+      Vk.log.info t.wall.last(domain: domain_escaped, last: last_value)
 
       update_attribute(:last_message_id, last_value)
     end
