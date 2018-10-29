@@ -29,7 +29,7 @@ module Vk
     end
 
     def process
-      Vk.log.info t.wall.process(domain: domain_escaped)
+      Vk.log.info t.wall.process(domain: domain)
       records = new_messages
       records.each { |msg| send_message(msg) }
       update_last records
