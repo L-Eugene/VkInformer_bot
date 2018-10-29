@@ -18,6 +18,10 @@ chat:
   disable: Disabling this chat
   added: Added http://vk.com/%{domain} to your watchlist
   removed: Removed http://vk.com/%{domain} from watchlist
+  denied: |-
+    Removed http://vk.com/%{domain} from watchlist.
+    It happened because group became private.
+    To resume watching this group - add it to watchlist manually when it will be available again.
   sending: Sending %{message} to %{chat}
   status: |-
     <b>Status</b>: %{enabled}
@@ -33,10 +37,9 @@ scan:
   start: Starting scan
   finish: Finish scan
 error:
-  vk_connection: Could not connect to VK.COM. (%{message})
   vk_api: VK API. %{error}
-  json_parse: |-
-    Error while parsing JSON response from VK.COM.
+  vk_api_parse: |-
+    Error while getting response from VK.COM.
     %{message}
   unsupported: Unsupported attachment %{type}
   download: |-

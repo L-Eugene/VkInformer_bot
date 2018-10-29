@@ -80,9 +80,6 @@ module Vk
         v: 5.36,
         access_token: Vk::Token.best.key
       )
-    rescue Faraday::Error
-      Vk.log.error t.error.vk_connection(message: $ERROR_INFO.message)
-      false
     end
 
     def parse_json(body)
@@ -94,11 +91,10 @@ module Vk
     end
 
     def hash_load
-      return false unless (response = http_load)
-
-      parse_json(response.body)
+      parse_json(http_load.body)
     rescue StandardError
-      Vk.log.error t.error.json_parse(message: $ERROR_INFO.message)
+      Vk.log.error t.error.vk_api_parse(message: $ERROR_INFO.message)
+      disable_wall if $ERROR_INFO.message.include? 'Access denied'
       false
     end
 
@@ -113,6 +109,13 @@ module Vk
             msg[:id] = id
             msg
           end
+    end
+
+    def disable_wall
+      chats.each do |chat|
+        chat.walls.delete(self)
+        chat.send_text(t.chat.denied(domain_escaped)) if chat.enabled?
+      end
     end
   end
 end

@@ -72,5 +72,19 @@ describe Vk::Wall do
       @wall.update_attribute(:last_message_id, 17_985)
       expect(@wall.send(:new_messages).size).to eq 3
     end
+
+    it 'should disable private walls' do
+      chat = FactoryBot.create(:chat, id: 1, enabled: false)
+
+      allow(@wall)
+        .to receive(:http_load)
+        .and_raise(Faraday::Error.new('Access denied: this wall available only for community members'))
+
+      chat.walls << @wall
+
+      expect(chat.reload.walls.size).to eq 1
+      expect(@wall.send(:new_messages)).to eq []
+      expect(chat.reload.walls.size).to eq 0
+    end
   end
 end
