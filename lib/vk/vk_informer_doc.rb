@@ -32,7 +32,7 @@ module Vk
     end
 
     def use_method
-      gif? ? :send_doc : :send_message
+      gif? ? :send_document : :send_message
     end
 
     private

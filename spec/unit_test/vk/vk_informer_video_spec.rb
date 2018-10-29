@@ -34,5 +34,42 @@ describe Vk::Video do
       expect(h).to have_key(:parse_mode)
       expect(h[:parse_mode]).to eq 'HTML'
     end
+
+    it 'should build result hash with video URL' do
+      tempfile = Tempfile.new
+
+      allow(@obj).to receive(:download!) do
+        @obj.instance_variable_set(:@file, tempfile)
+        true
+      end
+
+      h = @obj.to_hash
+
+      expect(h).to be_instance_of(Hash)
+      expect(h).to have_key(:video)
+      expect(h[:video]).to eq tempfile.path
+
+      expect(h).to have_key(:parse_mode)
+      expect(h).to have_key(:caption)
+    end
+
+    it 'should build result hash with file_id' do
+      tempfile = Tempfile.new
+
+      allow(@obj).to receive(:download!) do
+        @obj.instance_variable_set(:@file, tempfile)
+        true
+      end
+
+      @obj.instance_variable_set(:@file_id, 'some_file_id')
+      h = @obj.to_hash
+
+      expect(h).to be_instance_of(Hash)
+      expect(h).to have_key(:video)
+      expect(h[:video]).to eq 'some_file_id'
+
+      expect(h).to have_key(:parse_mode)
+      expect(h).to have_key(:caption)
+    end
   end
 end

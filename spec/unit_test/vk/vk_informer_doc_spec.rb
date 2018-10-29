@@ -29,7 +29,7 @@ describe Vk::Doc do
     end
 
     it 'should use send_doc API call if file is gif' do
-      expect(@obj2.use_method).to eq :send_doc
+      expect(@obj2.use_method).to eq :send_document
     end
   end
 

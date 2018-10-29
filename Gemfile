@@ -8,6 +8,7 @@ source 'https://rubygems.org' do
   gem 'r18n-core'
   gem 'r18n-rails-api'
   gem 'telegram-bot-ruby'
+  gem 'terrapin'
 
   group :test do
     gem 'database_cleaner'

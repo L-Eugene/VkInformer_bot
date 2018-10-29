@@ -91,7 +91,13 @@ module Vk
       print_error $ERROR_INFO
     end
 
-    def send_doc(doc)
+    def send_video(video)
+      Vk.tlg.api.send_video(video.merge(chat_id: chat_id))
+    rescue StandardError
+      print_error $ERROR_INFO
+    end
+
+    def send_document(doc)
       Vk.tlg.api.send_document(doc.merge(chat_id: chat_id))
     rescue StandardError
       print_error $ERROR_INFO

@@ -39,6 +39,9 @@ error:
     Error while parsing JSON response from VK.COM.
     %{message}
   unsupported: Unsupported attachment %{type}
+  download: |-
+    Download error:
+    %{message}
 exception:
   no_such_group:
     message: Group not found
