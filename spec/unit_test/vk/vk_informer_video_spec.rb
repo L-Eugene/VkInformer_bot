@@ -47,7 +47,7 @@ describe Vk::Video do
 
       expect(h).to be_instance_of(Hash)
       expect(h).to have_key(:video)
-      expect(h[:video]).to eq tempfile.path
+      expect(h[:video]).to be_instance_of Faraday::UploadIO
 
       expect(h).to have_key(:parse_mode)
       expect(h).to have_key(:caption)

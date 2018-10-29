@@ -67,7 +67,7 @@ module Vk
 
     def video_hash
       {
-        video: @file_id || @file.path,
+        video: @file_id || Faraday::UploadIO.new(@file.path, 'video/mp4'),
         caption: "#{domain_prefix domain}\n#{title}",
         parse_mode: 'Markdown'
       }
