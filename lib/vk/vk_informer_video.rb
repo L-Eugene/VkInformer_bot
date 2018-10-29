@@ -8,6 +8,15 @@ module Vk
   class Video < Attachment
     attr_reader :title, :description, :vid
 
+    YOUTUBE_DL_PARAMS = [
+      '--quiet',
+      '--no-continue',
+      '--no-playlist',
+      '--max-filesize 49m',
+      '--output :path',
+      ':url'
+    ].freeze
+
     def initialize(domain, node)
       super
 
@@ -36,7 +45,7 @@ module Vk
       @file = Tempfile.new('vk_informer_video')
 
       Terrapin::CommandLine
-        .new('youtube-dl', '-q --no-playlist --max-filesize 49m -o :path :url')
+        .new('youtube-dl', YOUTUBE_DL_PARAMS.join(' '))
         .run(path: @file.path, url: video_url)
       true
     rescue StandardError
