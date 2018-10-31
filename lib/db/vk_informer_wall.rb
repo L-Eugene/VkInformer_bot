@@ -68,7 +68,7 @@ module Vk
     def wid(records)
       records.first[:owner_id].to_i
     rescue StandardError
-      Vk.log.error $ERROR_INFO
+      Vk.log_format $ERROR_INFO
       nil
     end
 

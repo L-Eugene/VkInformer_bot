@@ -22,7 +22,7 @@ module Vk
     def self.available?
       Vk.tlg.api.get_me['ok']
     rescue StandardError
-      Vk.log.error "#{$ERROR_INFO.message}\n#{$ERROR_INFO.backtrace.join("\n")}"
+      Vk.log_format $ERROR_INFO
       false
     end
   end

@@ -67,7 +67,7 @@ class VkInformerBot
   rescue Vk::ErrorBase
     $ERROR_INFO.process
   rescue StandardError
-    Vk.log.error "#{$ERROR_INFO.message}\n#{$ERROR_INFO.backtrace.join("\n")}"
+    Vk.log_format($ERROR_INFO)
   end
 
   def scan
@@ -80,6 +80,8 @@ class VkInformerBot
     Vk::Wall.process
 
     log.info t.scan.finish
+  rescue StandardError
+    Vk.log_format($ERROR_INFO)
   end
 
   private
