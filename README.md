@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/L-Eugene/VkInformer_bot.svg?branch=master)](https://travis-ci.com/L-Eugene/VkInformer_bot)
+[![Build Status](https://travis-ci.org/L-Eugene/VkInformer_bot.svg?branch=master)](https://travis-ci.com/L-Eugene/VkInformer_bot)
 
 Rake commands:
 
