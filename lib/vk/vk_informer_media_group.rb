@@ -22,7 +22,7 @@ module Vk
       return photos.first.result hash unless hash.is_a? Array
 
       hash.each_with_index do |file, index|
-        photos[index].result result: file
+        photos[index].result('result' => file)
       end
     end
   end
