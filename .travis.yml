@@ -16,3 +16,4 @@ deploy:
     - /bin/bash ./deploy/development.sh
   on:
     branch: master
+    rvm: '2.4'
