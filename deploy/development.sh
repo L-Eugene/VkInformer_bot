@@ -25,9 +25,9 @@ scp /tmp/upgrade_script_dbg.sh $DEPLOY_USER@$DEPLOY_SERVER:upgrade_script_dbg.sh
 
 # Execute upgrade script
 ssh $DEPLOY_USER@$DEPLOY_SERVER /bin/bash ./upgrade_script_dbg.sh
-echo "Script execution status: $?"
+DEPLOY_STATUS=$?
 
 # Remove upgrade script from server
 ssh $DEPLOY_USER@$DEPLOY_SERVER '[ -f upgrade_script_dbg.sh ] && rm upgrade_script_dbg.sh'
 
-exit 0
+exit $DEPLOY_STATUS
