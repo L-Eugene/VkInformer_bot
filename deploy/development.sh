@@ -7,7 +7,7 @@ cat >/tmp/upgrade_script_dbg.sh <<EOF
 
   # UPDATE GEMSET
   cd $VK_INFORMER_DEBUG_BOTSERVER_PATH
-  rmv use $VK_INFORMER_DEBUG_RVM
+  rvm use $VK_INFORMER_DEBUG_RVM
   bundle install
   bundle update
 
