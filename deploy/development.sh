@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 cat >/tmp/upgrade_script_dbg.sh <<EOF
   # UPDATE SOURCE
   cd $VK_INFORMER_DEBUG_PATH
