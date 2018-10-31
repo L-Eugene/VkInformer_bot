@@ -7,7 +7,7 @@ cat >/tmp/upgrade_script_dbg.sh <<EOF
 
   # UPDATE GEMSET
   cd $VK_INFORMER_DEBUG_BOTSERVER_PATH
-  $VK_INFORMER_DEBUG_RVM/bundle install
+  $VK_INFORMER_DEBUG_RVM/bundle install --without test
   $VK_INFORMER_DEBUG_RVM/bundle update
 
   # RESTART BOTSERVER
