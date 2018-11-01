@@ -12,6 +12,10 @@ cat >/tmp/upgrade_script_dbg.sh <<EOF
   $VK_INFORMER_DEBUG_RVM/bundle install --without test
   $VK_INFORMER_DEBUG_RVM/bundle update
 
+  # UPDATE DATABASE
+  cd $VK_INFORMER_DEBUG_BOTSERVER_PATH/app
+  $VK_INFORMER_DEBUG_RVM/rake vk:db:migrate
+
   # RESTART BOTSERVER
   echo "Restarting server"
   sudo service $BOTSERVER_SERVICE_DEBUG restart
