@@ -64,7 +64,7 @@ module Vk
 
       Vk.tlg.api.edit_message_reply_markup(
         chat_id: chat_id,
-        message_id: callback.message.id,
+        message_id: callback.message.message_id,
         reply_markup: status[:reply_markup]
       )
     end
