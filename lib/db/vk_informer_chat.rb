@@ -59,7 +59,7 @@ module Vk
     end
 
     def send_callback_answer(callback_id)
-      Vk.Tlg.api.answer_callback_query(callback_query_id: callback_id)
+      Vk.tlg.api.answer_callback_query(callback_query_id: callback_id)
     end
 
     def send_message(hash, parse_mode = 'Markdown')
