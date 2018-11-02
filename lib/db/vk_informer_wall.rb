@@ -18,7 +18,6 @@ module Vk
       return false unless (data = hash_load)
 
       update_attribute(:last_message_id, lmi(data)) if last_message_id.nil?
-      update_attribute(:wall_id, wid(data)) if wall_id.nil?
       true
     end
 
@@ -70,13 +69,6 @@ module Vk
     # last message id
     def lmi(records)
       records.max_by { |x| x[:id].to_i }[:id].to_i
-    end
-
-    def wid(records)
-      records.first[:owner_id].to_i
-    rescue StandardError
-      Vk.log_format $ERROR_INFO
-      nil
     end
 
     def http_load
