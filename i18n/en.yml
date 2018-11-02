@@ -30,7 +30,8 @@ wall:
   sending: +++ Sending %{message}.
   last: +++ Updating last for %{domain} (%{last})
 token:
-  select: +++ Selected VK token #%{id}
+  select: |-
+    +++ Selected VK token #%{id}
 scan:
   start: Starting scan
   finish: Finish scan
