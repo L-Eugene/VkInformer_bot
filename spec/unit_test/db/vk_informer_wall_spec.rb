@@ -103,13 +103,13 @@ describe Vk::Wall do
       cd = nil
       expect { cd = JSON.parse(row.first[:callback_data], symbolize_names: true) }.not_to raise_error
       expect(cd).to be_instance_of(Hash)
-      expect(cd[:meth]).to eq 'nop'
+      expect(cd[:meth]).to eq 'cmd_nop'
       expect(cd[:args]).to eq []
 
       cd = nil
       expect { cd = JSON.parse(row.last[:callback_data], symbolize_names: true) }.not_to raise_error
       expect(cd).to be_instance_of(Hash)
-      expect(cd[:meth]).to eq 'delete'
+      expect(cd[:meth]).to eq 'cmd_delete'
       expect(cd[:args]).to include('1')
       expect(cd[:update]).to be true
     end
