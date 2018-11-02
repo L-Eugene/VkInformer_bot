@@ -97,15 +97,12 @@ describe Vk::Wall do
       row.each do |button|
         expect(button).to be_instance_of(Hash)
         expect(button).to have_key(:text)
-        expect(button).to have_key(:callback_data)
       end
 
-      cd = nil
-      expect { cd = JSON.parse(row.first[:callback_data], symbolize_names: true) }.not_to raise_error
-      expect(cd).to be_instance_of(Hash)
-      expect(cd[:meth]).to eq 'cmd_nop'
-      expect(cd[:args]).to eq []
+      expect(row.first).to have_key(:url)
+      expect(row.first[:url]).to eq 'https://vk.com/1'
 
+      expect(row.last).to have_key(:callback_data)
       cd = nil
       expect { cd = JSON.parse(row.last[:callback_data], symbolize_names: true) }.not_to raise_error
       expect(cd).to be_instance_of(Hash)

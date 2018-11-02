@@ -51,7 +51,7 @@ module Vk
       [
         {
           text: t.keyboard.domain(domain: domain),
-          callback_data: { meth: 'cmd_nop', args: [] }.to_json
+          url: "https://vk.com/#{domain}"
         },
         {
           text: t.keyboard.delete,
