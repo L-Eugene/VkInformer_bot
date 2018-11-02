@@ -70,11 +70,7 @@ module Vk
     end
 
     def send_message(hash, parse_mode = 'Markdown')
-      options = {
-        chat_id: chat_id,
-        parse_mode: parse_mode,
-        disable_web_page_preview: true
-      }.merge(hash)
+      options = { chat_id: chat_id, parse_mode: parse_mode, disable_web_page_preview: true }.merge(hash)
       split_message(hash[:text]).each do |t|
         Vk.tlg.api.send_message(options.merge(text: t))
       end
@@ -87,11 +83,7 @@ module Vk
     end
 
     def send_photo(hash)
-      Vk.tlg.api.send_photo({
-        chat_id: chat_id,
-        photo: hash[:media],
-        caption: hash[:caption]
-      }.merge(hash))
+      Vk.tlg.api.send_photo({ chat_id: chat_id, photo: hash[:media], caption: hash[:caption] }.merge(hash))
     rescue StandardError
       print_error $ERROR_INFO
     end

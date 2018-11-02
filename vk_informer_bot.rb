@@ -41,11 +41,7 @@ require 'telegram/vk_informer_classes'
 require 'db/vk_informer_model'
 Dir['vk/*.rb'].each { |f| require f }
 
-R18n.default_places = File.join(
-  File.dirname(__FILE__),
-  Vk.cfg.options['libdir'],
-  '../i18n/'
-)
+R18n.default_places = File.join(File.dirname(__FILE__), Vk.cfg.options['libdir'], '../i18n/')
 R18n.set('en')
 
 # Main bot class
@@ -108,11 +104,7 @@ class VkInformerBot
     meth = (text || '').downcase
     [%r{\@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
 
-    log.info t.log.command(
-      method: meth,
-      chat: chat.chat_id,
-      text: text
-    )
+    log.info t.log.command(method: meth, chat: chat.chat_id, text: text)
 
     "cmd_#{meth}"
   end
