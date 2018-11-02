@@ -50,7 +50,7 @@ module Vk
     def keyboard_row
       [
         {
-          text: t.keyboard.domain(domain: domain_escaped),
+          text: t.keyboard.domain(domain: domain),
           callback_data: { meth: 'cmd_nop', args: [] }.to_json
         },
         {
