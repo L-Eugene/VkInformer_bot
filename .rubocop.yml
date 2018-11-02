@@ -9,3 +9,6 @@ Style/RegexpLiteral:
 Style/MixinUsage:
   Exclude:
     - 'Rakefile'
+
+Metrics/ClassLength:
+  Max: 200

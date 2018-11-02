@@ -52,11 +52,11 @@ module Vk
       [
         {
           text: t.keyboard.domain(domain: domain_escaped),
-          callback_data: '/nop'
+          callback_data: { meth: 'nop', args: [] }.to_json
         },
         {
           text: t.keyboard.delete,
-          callback_data: "/delete #{domain}"
+          callback_data: { meth: 'delete', args: [domain], update: true }.to_json
         }
       ]
     end

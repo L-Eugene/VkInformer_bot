@@ -89,11 +89,10 @@ class VkInformerBot
   def process_callback(callback)
     @chat = Vk::Chat.find_or_create_by(chat_id: callback.message.chat.id)
 
-    meth = method_from_message(callback.data)
-    args = parse_args(%r{^\/\w+\s?}, callback.data)
+    data = JSON.parse callback.data, symbolize_names: true
 
-    send(meth, args) if respond_to? meth.to_sym, true
-    @chat.send_callback_answer(callback.id)
+    send(data[:meth], data[:args]) if respond_to? data[:meth].to_sym, true
+    @chat.send_callback_answer callback, data
   end
 
   def process_message(message)

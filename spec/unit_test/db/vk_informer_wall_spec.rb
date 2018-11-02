@@ -100,9 +100,18 @@ describe Vk::Wall do
         expect(button).to have_key(:callback_data)
       end
 
-      expect(row.first[:callback_data]).to eq '/nop'
+      cd = nil
+      expect { cd = JSON.parse(row.first[:callback_data], symbolize_names: true) }.not_to raise_error
+      expect(cd).to be_instance_of(Hash)
+      expect(cd[:meth]).to eq 'nop'
+      expect(cd[:args]).to eq []
 
-      expect(row.last[:callback_data]).to start_with('/delete')
+      cd = nil
+      expect { cd = JSON.parse(row.last[:callback_data], symbolize_names: true) }.not_to raise_error
+      expect(cd).to be_instance_of(Hash)
+      expect(cd[:meth]).to eq 'delete'
+      expect(cd[:args]).to include('1')
+      expect(cd[:update]).to be true
     end
   end
 end

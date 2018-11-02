@@ -58,8 +58,15 @@ module Vk
       send_text t.chat.delete(domain: wall.domain_escaped)
     end
 
-    def send_callback_answer(callback_id)
-      Vk.tlg.api.answer_callback_query(callback_query_id: callback_id)
+    def send_callback_answer(callback, data)
+      Vk.tlg.api.answer_callback_query(callback_query_id: callback.id)
+      return unless data.key? :update
+
+      Vk.tlg.api.edit_message_reply_markup(
+        chat_id: chat_id,
+        message_id: callback.message.id,
+        reply_markup: status[:reply_markup]
+      )
     end
 
     def send_message(hash, parse_mode = 'Markdown')
