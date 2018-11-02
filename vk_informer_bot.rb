@@ -61,9 +61,9 @@ class VkInformerBot
 
   def update(data)
     update = Telegram::Bot::Types::Update.new(data)
-    message = update.message
 
-    process_message(message) unless message.nil?
+    process_message(update.message) unless update.message.nil?
+    process_callback(update.callback_query) unless update.callback_query.nil?
   rescue Vk::ErrorBase
     $ERROR_INFO.process
   rescue StandardError
@@ -85,6 +85,16 @@ class VkInformerBot
   end
 
   private
+
+  def process_callback(callback)
+    @chat = Vk::Chat.find_or_create_by(chat_id: callback.message.chat.id)
+
+    meth = method_from_message(callback.data)
+    args = parse_args(%r{^\/\w+\s?}, callback.data)
+
+    send(meth, args) if respond_to? meth.to_sym, true
+    @chat.send_callback_answer(callback.id)
+  end
 
   def process_message(message)
     @chat = Vk::Chat.find_or_create_by(chat_id: message.chat.id)
@@ -136,7 +146,7 @@ class VkInformerBot
   end
 
   def cmd_list(_args)
-    chat.send_text chat.status, 'HTML'
+    chat.send_message chat.status, 'HTML'
   end
 
   def cmd_help(_args)

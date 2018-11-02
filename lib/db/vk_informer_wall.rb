@@ -48,14 +48,21 @@ module Vk
       Vk::Tlg.escape domain
     end
 
+    def keyboard_row
+      [
+        {
+          text: t.keyboard.domain(domain: domain_escaped),
+          callback_data: '/nop'
+        },
+        {
+          text: t.keyboard.delete,
+          callback_data: "/delete #{domain}"
+        }
+      ]
+    end
+
     def self.process
-      find_each do |wall|
-        if wall.watched?
-          wall.process
-        else
-          wall.update_last
-        end
-      end
+      find_each { |wall| wall.watched? ? wall.process : wall.update_last }
     end
 
     private

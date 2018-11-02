@@ -24,9 +24,7 @@ chat:
     To resume watching this group - add it to watchlist manually when it will be available again.
   sending: Sending %{message} to %{chat}
   status: |-
-    <b>Status</b>: %{enabled}
-    <b>Watching</b>:
-    %{list}
+    <strong>Status</strong>: %{enabled}
 wall:
   process: ++ Processing %{domain}.
   sending: +++ Sending %{message}.
@@ -63,3 +61,7 @@ classes:
 attachment:
   poll:
     poll: Опрос
+keyboard:
+  domain: |-
+    %{domain}
+  delete: ❌

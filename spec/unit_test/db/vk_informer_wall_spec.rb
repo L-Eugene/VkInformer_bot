@@ -87,4 +87,22 @@ describe Vk::Wall do
       expect(chat.reload.walls.size).to eq 0
     end
   end
+
+  describe 'Generate keyboard buttons' do
+    it 'should prepare hash' do
+      wall = FactoryBot.create(:wall, id: 1, domain: '1')
+      row = wall.keyboard_row
+
+      expect(row).to be_instance_of(Array)
+      row.each do |button|
+        expect(button).to be_instance_of(Hash)
+        expect(button).to have_key(:text)
+        expect(button).to have_key(:callback_data)
+      end
+
+      expect(row.first[:callback_data]).to eq '/nop'
+
+      expect(row.last[:callback_data]).to start_with('/delete')
+    end
+  end
 end

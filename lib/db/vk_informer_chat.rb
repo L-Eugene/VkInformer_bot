@@ -32,10 +32,12 @@ module Vk
     end
 
     def status
-      t.chat.status(
-        enabled: enabled? ? 'enabled' : 'disabled',
-        list: walls.pluck(:domain).join("\n")
-      )
+      kbd = Telegram::Bot::Types::InlineKeyboardMarkup.new
+      kbd.inline_keyboard = walls.map(&:keyboard_row)
+      {
+        text: t.chat.status(enabled: enabled? ? 'enabled' : 'disabled'),
+        reply_markup: kbd
+      }
     end
 
     def add(wall)
@@ -54,6 +56,10 @@ module Vk
 
       walls.delete wall
       send_text t.chat.delete(domain: wall.domain_escaped)
+    end
+
+    def send_callback_answer(callback_id)
+      Vk.Tlg.api.answer_callback_query(callback_query_id: callback_id)
     end
 
     def send_message(hash, parse_mode = 'Markdown')
