@@ -2,8 +2,8 @@
   "type": "video",
   "video": {
     "id": 123456,
-    "owner_id": 321,
-    "title": "Video Title",
+    "owner_id": -321,
+    "title": "Текст на русском",
     "description": "Video Description"
   }
 }

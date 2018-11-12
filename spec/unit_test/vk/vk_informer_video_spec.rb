@@ -27,6 +27,8 @@ describe Vk::Video do
       h = @obj.to_hash
       expect(h).to be_instance_of(Hash)
       expect(h).to have_key(:text)
+      expect(h[:text]).to include '>Текст на русском</a>'
+      expect(h[:text]).to include 'href=\'https://vk.com/video-321_123456\''
 
       expect(h).to have_key(:disable_web_page_preview)
       expect(h[:disable_web_page_preview]).to be false
