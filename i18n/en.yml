@@ -51,18 +51,22 @@ error:
 exception:
   no_such_group:
     message: Group not found
-    cmessage: No such group
+    cmessage: |-
+      No such group.
+      Use /list command to manage watchlist.
   incorrect_group:
     message: Error receiving group %{domain}
     cmessage: Group https://vk.com/%{domain} is invalid.
   too_much_groups:
-    message: |-
-      Chat %{chat} is already watching maximal amount of groups.
+    message: Chat %{chat} is already watching maximal amount of groups.
+    cmessage: |-
+      This chat is already watching maximal amount of groups.
       Use /list command to manage watchlist.
-    cmessage: This chat is already watching maximal amount of groups.
   already_watching:
     message: Chat %{chat} is already watching group %{domain}
-    cmessage: You are already watching https://vk.com/%{domain}
+    cmessage: |-
+      You are already watching https://vk.com/%{domain}
+      Use /list command to manage watchlist.
 classes:
   undefined: Should be defined in child class
 attachment:
