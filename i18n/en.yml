@@ -16,8 +16,12 @@ log:
 chat:
   enable: Enabling this chat
   disable: Disabling this chat
-  added: Added http://vk.com/%{domain} to your watchlist
-  removed: Removed http://vk.com/%{domain} from watchlist
+  added: |-
+    Added http://vk.com/%{domain} to your watchlist.
+    Use /list command to manage watchlist.
+  removed: |-
+    Removed http://vk.com/%{domain} from watchlist
+    Use /list command to manage watchlist.
   denied: |-
     Removed http://vk.com/%{domain} from watchlist.
     It happened because group became private.
@@ -52,7 +56,9 @@ exception:
     message: Error receiving group %{domain}
     cmessage: Group https://vk.com/%{domain} is invalid.
   too_much_groups:
-    message: Chat %{chat} is already watching maximal amount of groups.
+    message: |-
+      Chat %{chat} is already watching maximal amount of groups.
+      Use /list command to manage watchlist.
     cmessage: This chat is already watching maximal amount of groups.
   already_watching:
     message: Chat %{chat} is already watching group %{domain}
