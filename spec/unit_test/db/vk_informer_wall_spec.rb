@@ -73,6 +73,12 @@ describe Vk::Wall do
       expect(@wall.send(:new_messages).size).to eq 3
     end
 
+    it 'should not process unwatched walls' do
+      expect_any_instance_of(Vk::Wall).not_to receive(:process)
+
+      Vk::Wall.process
+    end
+
     it 'should disable private walls' do
       chat = FactoryBot.create(:chat, id: 1, enabled: false)
 

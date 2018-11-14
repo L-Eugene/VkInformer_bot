@@ -61,7 +61,7 @@ module Vk
     end
 
     def self.process
-      find_each { |wall| wall.watched? ? wall.process : wall.update_last }
+      find_each { |wall| wall.process if wall.watched? }
     end
 
     private
