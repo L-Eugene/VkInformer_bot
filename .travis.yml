@@ -17,3 +17,11 @@ deploy:
   on:
     branch: master
     rvm: '2.4'
+- provoder: script
+  skip_cleanup: false
+  script:
+    - /bin/bash ./deploy/production.sh
+  on:
+    tags: true
+    branch: master
+    rvm: '2.3'
