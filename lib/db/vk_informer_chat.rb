@@ -47,7 +47,7 @@ module Vk
 
       raise Vk::AlreadyWatching, data: wall, chat: self if watching? wall
 
-      wall.update_last if wall.chats.empty?
+      wall.update_last unless wall.watched?
       walls << wall
       send_text Vk.t.chat.added(domain: wall.domain_escaped)
     end

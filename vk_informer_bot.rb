@@ -106,7 +106,11 @@ class VkInformerBot
   end
 
   def cmd_start(_args)
-    chat.send_text Vk.t.chat.enable unless chat.enabled?
+    unless chat.enabled?
+      chat.send_text Vk.t.chat.enable
+      chat.walls.each { |wall| wall.update_last unless wall.watched? }
+    end
+
     chat.update_attribute(:enabled, true)
   end
 
