@@ -5,8 +5,10 @@ module Vk
   class Attachment
     attr_reader :domain
 
-    def initialize(domain, _node)
+    def initialize(domain, node)
       @domain = domain
+
+      Vk.log.debug "Parsing attachment: #{node}"
     end
 
     def to_hash
