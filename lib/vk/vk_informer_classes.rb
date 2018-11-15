@@ -51,7 +51,7 @@ module Vk
       if valid_attachment? hash[:type]
         data << attachment(hash[:type]).new(domain, hash)
       else
-        Vk.log.info t.error.unsupported(type: hash[:type])
+        Vk.log.info Vk.t.error.unsupported(type: hash[:type])
       end
     end
   end

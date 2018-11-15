@@ -3,8 +3,6 @@
 module Vk
   # Basic class for exceptions with telegram message support
   class ErrorBase < StandardError
-    include R18n::Helpers
-
     attr_reader :cmessage
 
     def initialize(options = {})
@@ -25,11 +23,11 @@ module Vk
     private
 
     def default_message
-      raise t.classes.undefined
+      raise Vk.t.classes.undefined
     end
 
     def default_cmessage
-      raise t.classes.undefined
+      raise Vk.t.classes.undefined
     end
 
     def log_level

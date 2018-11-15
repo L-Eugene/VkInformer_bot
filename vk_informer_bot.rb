@@ -6,13 +6,9 @@ require 'telegram/bot'
 require 'faraday'
 require 'json'
 require 'yaml'
-require 'r18n-core'
-require 'r18n-rails-api'
 
 # VK informer module
 module Vk
-  include R18n::Helpers
-
   # Config singleton
   class Config
     include Singleton
@@ -39,15 +35,11 @@ $LOAD_PATH.unshift(
 require 'log/vk_informer_logger'
 require 'telegram/vk_informer_classes'
 require 'db/vk_informer_model'
+require 'r18n/vk_informer_r18n'
 Dir['vk/*.rb'].each { |f| require f }
-
-R18n.default_places = File.join(File.dirname(__FILE__), Vk.cfg.options['libdir'], '../i18n/')
-R18n.set('en')
 
 # Main bot class
 class VkInformerBot
-  include R18n::Helpers
-
   attr_reader :token, :client, :log, :chat
 
   def initialize
@@ -69,13 +61,13 @@ class VkInformerBot
   def scan
     cleanup
 
-    log.info t.scan.start
+    log.info Vk.t.scan.start
 
     return unless Vk::Tlg.available?
 
     Vk::Wall.process
 
-    log.info t.scan.finish
+    log.info Vk.t.scan.finish
   rescue StandardError
     Vk.log_format($ERROR_INFO)
   end
@@ -104,7 +96,7 @@ class VkInformerBot
     meth = (text || '').downcase
     [%r{\@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
 
-    log.info t.log.command(method: meth, chat: chat.chat_id, text: text)
+    log.info Vk.t.log.command(method: meth, chat: chat.chat_id, text: text)
 
     "cmd_#{meth}"
   end
@@ -114,26 +106,26 @@ class VkInformerBot
   end
 
   def cmd_start(_args)
-    chat.send_text t.chat.enable unless chat.enabled?
+    chat.send_text Vk.t.chat.enable unless chat.enabled?
     chat.update_attribute(:enabled, true)
   end
 
   def cmd_stop(_args)
-    chat.send_text t.chat.disable if chat.enabled?
+    chat.send_text Vk.t.chat.disable if chat.enabled?
     chat.update_attribute(:enabled, false)
   end
 
   def cmd_add(args)
     group = Vk::Wall.find_or_create_by(domain: args.first)
     chat.add group
-    log.info t.log.added(domain: group.domain_escaped, chat: chat.chat_id)
+    log.info Vk.t.log.added(domain: group.domain_escaped, chat: chat.chat_id)
   end
 
   def cmd_delete(args)
     domain = args.first
     group = Vk::Wall.find_by(domain: domain)
     chat.delete group
-    log.info t.log.deleted(domain: group.domain_escaped, chat: chat.chat_id)
+    log.info Vk.t.log.deleted(domain: group.domain_escaped, chat: chat.chat_id)
   end
 
   def cmd_list(_args)
@@ -141,7 +133,7 @@ class VkInformerBot
   end
 
   def cmd_help(_args)
-    chat.send_text t.help, 'HTML'
+    chat.send_text Vk.t.help, 'HTML'
   end
 
   def cleanup

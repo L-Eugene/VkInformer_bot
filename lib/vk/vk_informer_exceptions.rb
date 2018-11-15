@@ -8,11 +8,11 @@ module Vk
     private
 
     def default_message
-      t.exception.no_such_group.message
+      Vk.t.exception.no_such_group.message
     end
 
     def default_cmessage
-      t.exception.no_such_group.cmessage
+      Vk.t.exception.no_such_group.cmessage
     end
 
     def log_level
@@ -25,11 +25,11 @@ module Vk
     private
 
     def default_message
-      t.exception.incorrect_group.message(domain: @data&.domain)
+      Vk.t.exception.incorrect_group.message(domain: @data&.domain)
     end
 
     def default_cmessage
-      t.exception.incorrect_group.cmessage(domain: @data&.domain)
+      Vk.t.exception.incorrect_group.cmessage(domain: @data&.domain)
     end
 
     def log_level
@@ -42,11 +42,11 @@ module Vk
     private
 
     def default_message
-      t.exception.too_much_groups.message(chat: @chat&.chat_id)
+      Vk.t.exception.too_much_groups.message(chat: @chat&.chat_id)
     end
 
     def default_cmessage
-      t.exception.too_much_groups.cmessage
+      Vk.t.exception.too_much_groups.cmessage
     end
 
     def log_level
@@ -59,14 +59,14 @@ module Vk
     private
 
     def default_message
-      t.exception.already_watching.message(
+      Vk.t.exception.already_watching.message(
         chat: @chat&.chat_id,
         domain: @data.domain
       )
     end
 
     def default_cmessage
-      t.exception.already_watching.cmessage(domain: @data.domain)
+      Vk.t.exception.already_watching.cmessage(domain: @data.domain)
     end
   end
 end

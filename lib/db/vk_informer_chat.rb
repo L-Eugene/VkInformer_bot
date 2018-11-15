@@ -35,7 +35,7 @@ module Vk
       kbd = Telegram::Bot::Types::InlineKeyboardMarkup.new
       kbd.inline_keyboard = walls.map(&:keyboard_row)
       {
-        text: t.chat.status(enabled: enabled? ? 'enabled' : 'disabled'),
+        text: Vk.t.chat.status(enabled: enabled? ? 'enabled' : 'disabled'),
         reply_markup: kbd
       }
     end
@@ -49,14 +49,14 @@ module Vk
 
       wall.update_last if wall.chats.empty?
       walls << wall
-      send_text t.chat.added(domain: wall.domain_escaped)
+      send_text Vk.t.chat.added(domain: wall.domain_escaped)
     end
 
     def delete(wall)
       raise Vk::NoSuchGroup, chat: self if wall.nil?
 
       walls.delete wall
-      send_text t.chat.delete(domain: wall.domain_escaped)
+      send_text Vk.t.chat.delete(domain: wall.domain_escaped)
     end
 
     def send_callback_answer(callback, data)
@@ -110,7 +110,7 @@ module Vk
     end
 
     def send_post(post)
-      Vk.log.info t.chat.sending(message: post.message_id, chat: chat_id)
+      Vk.log.info Vk.t.chat.sending(message: post.message_id, chat: chat_id)
       post.data.each { |p| p.result send(p.use_method, p.to_hash) }
     end
 

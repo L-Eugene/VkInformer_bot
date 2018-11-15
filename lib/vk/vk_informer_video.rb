@@ -50,7 +50,7 @@ module Vk
       true
     rescue StandardError
       @file.unlink
-      Vk.log.info t.error.download(message: $ERROR_INFO.message)
+      Vk.log.info Vk.t.error.download(message: $ERROR_INFO.message)
       false
     end
 

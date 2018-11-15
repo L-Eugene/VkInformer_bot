@@ -23,12 +23,12 @@ module Vk
 
     def send_message(msg)
       post = Vk::Post.new msg, self
-      Vk.log.info t.wall.sending(message: post.message_id)
+      Vk.log.info Vk.t.wall.sending(message: post.message_id)
       chats.each { |chat| chat.send_post(post) if chat.enabled? }
     end
 
     def process
-      Vk.log.info t.wall.process(domain: domain)
+      Vk.log.info Vk.t.wall.process(domain: domain)
       records = new_messages
       records.each { |msg| send_message(msg) }
       update_last records
@@ -38,7 +38,7 @@ module Vk
       return if records.empty?
 
       last_value = lmi(records)
-      Vk.log.info t.wall.last(domain: domain_escaped, last: last_value)
+      Vk.log.info Vk.t.wall.last(domain: domain_escaped, last: last_value)
 
       update_attribute(:last_message_id, last_value)
     end
@@ -50,11 +50,11 @@ module Vk
     def keyboard_row
       [
         {
-          text: t.keyboard.domain(domain: domain),
+          text: Vk.t.keyboard.domain(domain: domain),
           url: "https://vk.com/#{domain}"
         },
         {
-          text: t.keyboard.delete,
+          text: Vk.t.keyboard.delete,
           callback_data: { meth: 'cmd_delete', args: [domain], update: true }.to_json
         }
       ]
@@ -84,7 +84,7 @@ module Vk
     def parse_json(body)
       data = JSON.parse(body, symbolize_names: true)
 
-      raise t.error.vk_api(error: data[:error][:error_msg]) if data.key? :error
+      raise Vk.t.error.vk_api(error: data[:error][:error_msg]) if data.key? :error
 
       data[:response][:items]
     end
@@ -92,7 +92,7 @@ module Vk
     def hash_load
       parse_json(http_load.body)
     rescue StandardError
-      Vk.log.error t.error.vk_api_parse(message: $ERROR_INFO.message)
+      Vk.log.error Vk.t.error.vk_api_parse(message: $ERROR_INFO.message)
       disable_wall if $ERROR_INFO.message.include? 'Access denied'
       false
     end

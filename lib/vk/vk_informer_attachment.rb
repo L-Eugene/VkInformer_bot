@@ -3,8 +3,6 @@
 module Vk
   # Basic class for attachments
   class Attachment
-    include R18n::Helpers
-
     attr_reader :domain
 
     def initialize(domain, _node)
@@ -12,11 +10,11 @@ module Vk
     end
 
     def to_hash
-      raise t.classes.undefined
+      raise Vk.t.classes.undefined
     end
 
     def use_method
-      raise t.classes.undefined
+      raise Vk.t.classes.undefined
     end
 
     def result(_hash)
