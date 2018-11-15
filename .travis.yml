@@ -13,14 +13,14 @@ deploy:
 - provider: script
   skip_cleanup: false
   script:
-    - /bin/bash ./deploy/development.sh
+    - /bin/bash ./deploy/script.sh development
   on:
     branch: master
     rvm: '2.4'
 - provider: script
   skip_cleanup: false
   script:
-    - /bin/bash ./deploy/production.sh
+    - /bin/bash ./deploy/script.sh production
   on:
     tags: true
     rvm: '2.3'
