@@ -23,6 +23,7 @@ module Vk
       @vid = "#{node[:video][:owner_id]}_#{node[:video][:id]}"
       @title = node[:video][:title]
       @description = node[:video][:description]
+      @downloaded = false if node[:video].key? :live
     end
 
     def to_hash
