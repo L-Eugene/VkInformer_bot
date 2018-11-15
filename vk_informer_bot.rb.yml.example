@@ -5,7 +5,9 @@ tg_token: YOUR_TELEGRAM_TOKEN
 
 logfile: ../log/vk_informer_bot_test.log
 
-debug: /tmp/vk_informer_bot_test_debug
+debug:
+  flag: /tmp/vk_informer_bot_test_debug
+  default: false
 
 database:
   adapter: mysql2

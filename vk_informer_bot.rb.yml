@@ -4,7 +4,9 @@ libdir: lib
 basedir: db
 logfile: /tmp/vktest.log
 
-debug: /tmp/test_debug
+debug:
+  flag: /tmp/test_debug
+  default: true
 
 database:
   :adapter: sqlite3
