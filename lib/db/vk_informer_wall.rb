@@ -113,7 +113,7 @@ module Vk
     def disable_wall
       chats.each do |chat|
         chat.walls.delete(self)
-        chat.send_text(t.chat.denied(domain_escaped)) if chat.enabled?
+        chat.send_text(Vk.t.chat.denied(domain_escaped)) if chat.enabled?
       end
     end
   end
