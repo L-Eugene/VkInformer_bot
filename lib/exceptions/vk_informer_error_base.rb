@@ -14,8 +14,8 @@ module Vk
     end
 
     def process
-      Vk.log.send(log_level, message)
-      Vk.log.send(log_level, @data.inspect) unless @data.nil?
+      Vk.log.__send__(log_level, message)
+      Vk.log.__send__(log_level, @data.inspect) unless @data.nil?
 
       @chat&.send_message(text: cmessage)
     end

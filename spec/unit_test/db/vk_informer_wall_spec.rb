@@ -64,13 +64,13 @@ describe Vk::Wall do
     end
 
     it 'should process only new messages' do
-      expect(@wall.send(:new_messages).size).to eq 5
+      expect(@wall.__send__(:new_messages).size).to eq 5
 
       @wall.update_attribute(:last_message_id, 18_023)
-      expect(@wall.send(:new_messages).size).to eq 0
+      expect(@wall.__send__(:new_messages).size).to eq 0
 
       @wall.update_attribute(:last_message_id, 17_985)
-      expect(@wall.send(:new_messages).size).to eq 3
+      expect(@wall.__send__(:new_messages).size).to eq 3
     end
 
     it 'should not process unwatched walls' do
@@ -89,7 +89,7 @@ describe Vk::Wall do
       chat.walls << @wall
 
       expect(chat.reload.walls.size).to eq 1
-      expect(@wall.send(:new_messages)).to eq []
+      expect(@wall.__send__(:new_messages)).to eq []
       expect(chat.reload.walls.size).to eq 0
     end
   end
