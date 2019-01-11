@@ -30,7 +30,7 @@ chat:
   status: |-
     <strong>Status</strong>: %{enabled}
   delete_keyboard: |-
-    <strong>WARNING:</strong> This can not be undone.
+    ❗️❗️❗️ <strong>WARNING:</strong> This can not be undone. ❗️❗️❗️
 
     Select group you would like to stop watching.
     If you removed group by mistake - you should add it back manually using /add command.

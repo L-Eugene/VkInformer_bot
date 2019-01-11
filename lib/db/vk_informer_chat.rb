@@ -81,6 +81,8 @@ module Vk
     end
 
     def send_message(hash, parse_mode = 'Markdown')
+      Vk.log.debug hash.inspect
+
       options = { chat_id: chat_id, parse_mode: parse_mode, disable_web_page_preview: true }.merge(hash)
       split_message(hash[:text]).each { |t| Vk.tlg.api.send_message(options.merge(text: t)) }
     rescue StandardError
