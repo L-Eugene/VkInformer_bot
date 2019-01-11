@@ -133,7 +133,10 @@ class VkInformerBot
   end
 
   def cmd_delete(args)
+    return chat.send_message chat.delete_keyboard if args.empty?
+
     domain = args.first
+
     group = Vk::Wall.find_by(domain: domain)
     chat.delete group
     log.info Vk.t.log.deleted(domain: group.domain_escaped, chat: chat.chat_id)

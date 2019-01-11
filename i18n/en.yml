@@ -18,10 +18,10 @@ chat:
   disable: Disabling this chat
   added: |-
     Added http://vk.com/%{domain} to your watchlist.
-    Use /list command to manage watchlist.
+    Use /list command to view watchlist.
   removed: |-
     Removed http://vk.com/%{domain} from watchlist
-    Use /list command to manage watchlist.
+    Use /list command to view watchlist.
   denied: |-
     Removed http://vk.com/%{domain} from watchlist.
     It happened because group became private.
@@ -29,6 +29,11 @@ chat:
   sending: Sending %{message} to %{chat}
   status: |-
     <strong>Status</strong>: %{enabled}
+  delete_keyboard: |-
+    <strong>WARNING:</strong> This can not be undone.
+
+    Select group you would like to stop watching.
+    If you removed group by mistake - you should add it back manually using /add command.
 wall:
   process: ++ Processing %{domain}.
   sending: +++ Sending %{message}.
@@ -71,8 +76,7 @@ classes:
   undefined: Should be defined in child class
 attachment:
   poll:
-    poll: Опрос
+    poll: Poll
 keyboard:
   domain: |-
     %{domain}
-  delete: ❌

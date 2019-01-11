@@ -26,19 +26,28 @@ module Vk
     end
 
     def watching?(wall)
-      return false if wall.nil?
-
-      walls.any? { |w| w.domain == wall.domain }
+      !wall.nil? && walls.any? { |w| w.domain == wall.domain }
     end
 
     def status
       kbd = Telegram::Bot::Types::InlineKeyboardMarkup.new
-      kbd.inline_keyboard = walls.map(&:keyboard_row)
+      kbd.inline_keyboard = walls.map(&:keyboard_list)
+
       Vk.log.debug kbd.inspect
+
       {
         text: Vk.t.chat.status(enabled: enabled? ? 'enabled' : 'disabled'),
         reply_markup: kbd
       }
+    end
+
+    def delete_keyboard
+      kbd = Telegram::Bot::Types::InlineKeyboardMarkup.new
+      kbd.inline_keyboard = walls.map(&:keyboard_delete)
+
+      Vk.log.debug kbd.inspect
+
+      { text: Vk.t.chat.delete_keyboard, reply_markup: kbd }
     end
 
     def add(wall)
@@ -73,9 +82,7 @@ module Vk
 
     def send_message(hash, parse_mode = 'Markdown')
       options = { chat_id: chat_id, parse_mode: parse_mode, disable_web_page_preview: true }.merge(hash)
-      split_message(hash[:text]).each do |t|
-        Vk.tlg.api.send_message(options.merge(text: t))
-      end
+      split_message(hash[:text]).each { |t| Vk.tlg.api.send_message(options.merge(text: t)) }
     rescue StandardError
       print_error $ERROR_INFO
     end
@@ -128,11 +135,7 @@ module Vk
 
     def split_message(text)
       text.split("\n").each_with_object([+'']) do |str, arr|
-        if str.length + arr.last.length > MAX_LENGTH
-          arr << +"#{str}\n"
-        else
-          arr.last << "#{str}\n"
-        end
+        str.length + arr.last.length > MAX_LENGTH ? arr << +"#{str}\n" : arr.last << "#{str}\n"
       end
     end
   end

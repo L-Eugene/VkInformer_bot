@@ -47,14 +47,19 @@ module Vk
       Vk::Tlg.escape domain
     end
 
-    def keyboard_row
+    def keyboard_list
       [
         {
           text: Vk.t.keyboard.domain(domain: domain),
           url: "https://vk.com/#{domain}"
-        },
+        }
+      ]
+    end
+
+    def keyboard_delete
+      [
         {
-          text: Vk.t.keyboard.delete,
+          text: Vk.t.keyboard.domain(domain: domain),
           callback_data: { action: "delete #{domain}", update: true }.to_json
         }
       ]

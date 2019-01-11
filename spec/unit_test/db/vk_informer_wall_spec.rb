@@ -95,9 +95,14 @@ describe Vk::Wall do
   end
 
   describe 'Generate keyboard buttons' do
-    it 'should prepare hash' do
-      wall = FactoryBot.create(:wall, id: 1, domain: '1')
-      row = wall.keyboard_row
+    before(:each) do
+      @wall = FactoryBot.create(:wall, id: 1, domain: 'domain1')
+    end
+
+    it 'should prepare hash for /list command' do
+      row = @wall.keyboard_list
+
+      expect(row.length).to eq 1
 
       expect(row).to be_instance_of(Array)
       row.each do |button|
@@ -106,14 +111,26 @@ describe Vk::Wall do
       end
 
       expect(row.first).to have_key(:url)
-      expect(row.first[:url]).to eq 'https://vk.com/1'
+      expect(row.first[:url]).to eq 'https://vk.com/domain1'
+    end
 
-      expect(row.last).to have_key(:callback_data)
+    it 'should prepare hash for /delete command' do
+      row = @wall.keyboard_delete
+
+      expect(row.length).to eq 1
+
+      expect(row).to be_instance_of(Array)
+      row.each do |button|
+        expect(button).to be_instance_of(Hash)
+        expect(button).to have_key(:text)
+      end
+
+      expect(row.first).to have_key(:callback_data)
       cd = nil
-      expect { cd = JSON.parse(row.last[:callback_data], symbolize_names: true) }.not_to raise_error
+      expect { cd = JSON.parse(row.first[:callback_data], symbolize_names: true) }.not_to raise_error
       expect(cd).to be_instance_of(Hash)
 
-      expect(cd[:action]).to eq 'delete 1'
+      expect(cd[:action]).to eq 'delete domain1'
       expect(cd[:update]).to be true
     end
   end
