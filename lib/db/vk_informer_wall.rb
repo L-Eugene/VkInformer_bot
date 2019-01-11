@@ -55,7 +55,7 @@ module Vk
         },
         {
           text: Vk.t.keyboard.delete,
-          callback_data: { meth: 'cmd_delete', args: [domain], update: true }.to_json
+          callback_data: { action: "cmd_delete #{domain}", update: true }.to_json
         }
       ]
     end

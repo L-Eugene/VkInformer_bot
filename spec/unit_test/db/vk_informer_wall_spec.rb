@@ -112,8 +112,8 @@ describe Vk::Wall do
       cd = nil
       expect { cd = JSON.parse(row.last[:callback_data], symbolize_names: true) }.not_to raise_error
       expect(cd).to be_instance_of(Hash)
-      expect(cd[:meth]).to eq 'cmd_delete'
-      expect(cd[:args]).to include('1')
+
+      expect(cd[:action]).to eq 'cmd_delete 1'
       expect(cd[:update]).to be true
     end
   end
