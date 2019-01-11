@@ -1,0 +1,83 @@
+help: |-
+  <strong>/help</strong>  - Вывести данное сообщение.
+  <strong>/start</strong> - Активировать бота.
+  <strong>/stop</strong>  - Приостановить бота (список наблюдаемых групп сохранится, но обновления не будут приходить).
+  <strong>/add</strong> <em>domain</em> - Добавить группу в список просмотра. <em>Domain</em> - человекочитаемый id группы.
+  <strong>/delete</strong> <em>domain</em> - Удалить группу из списка просмотра. Если не передавать параметр - предложит выбор из списка.
+  <strong>/list</strong> - Просмотреть список наблюдаемых групп.
+log:
+  command: |-
+    %{method} command from %{chat}
+    Full command is: %{text}
+  added: |-
+    Added https://vk.com/%{domain} to chat:%{chat}
+  deleted: |-
+    Deleted https://vk.com/%{domain} from chat:%{chat}
+chat:
+  enable: Чат активирован
+  disable: Чат деактивирован
+  added: |-
+    Группа http://vk.com/%{domain} добавлена в ваш список наблюдения.
+    Используйте команду /list, чтобы посмотреть весь список.
+  removed: |-
+    Группа http://vk.com/%{domain} удалена из вашего списка наблюдения.
+    Используйте команду /list, чтобы посмотреть весь список.
+  denied: |-
+    Группа http://vk.com/%{domain} удалена из вашего списка наблюдения.
+    Это произошло из-за того, что доступ к группе был закрыт.
+    Если вы хотите продолжить наблюдение за группой, добавьте её в список наблюдения с помощью команды /add после того, как доступ к группе будет открыт.
+  sending: Sending %{message} to %{chat}
+  status: |-
+    <strong>Состояние</strong>: %{enabled}
+  delete_keyboard: |-
+    ❗️❗️❗️ <strong>ОСТОРОЖНО:</strong> Действие нельзя отменить. ❗️❗️❗️
+
+    Выберите группу, которую вы хотели бы удалить из списка наблюдения.
+    Если вы удалили группу случайно - добавьте её вручную с помощью команды /add.
+wall:
+  process: ++ Processing %{domain}.
+  sending: +++ Sending %{message}.
+  last: +++ Updating last for %{domain} (%{last})
+token:
+  select: |-
+    +++ Selected VK token #%{id}
+scan:
+  start: Starting scan
+  finish: Finish scan
+error:
+  vk_api: VK API. %{error}
+  vk_api_parse: |-
+    Error while getting response from VK.COM.
+    %{message}
+  unsupported: Unsupported attachment %{type}
+  download: |-
+    Download error:
+    %{message}
+exception:
+  no_such_group:
+    message: Group not found
+    cmessage: |-
+      Группа не найдена в вашем списке наблюдения.
+      Используйте команду /list, чтобы посмотреть список групп.
+  incorrect_group:
+    message: Error receiving group %{domain}
+    cmessage: Группа https://vk.com/%{domain} не существует.
+  too_much_groups:
+    message: Chat %{chat} is already watching maximal amount of groups.
+    cmessage: |-
+      Максимальное число наблюдаемых групп уже достигнуто.
+      Используйте команду /list, чтобы посмотреть список групп.
+      Используйте команду /delete, чтобы удалить группы из списка.
+  already_watching:
+    message: Chat %{chat} is already watching group %{domain}
+    cmessage: |-
+      Группа https://vk.com/%{domain} уже в вашем списке наблюдения.
+      Используйте команду /list, чтобы посмотреть список групп.
+classes:
+  undefined: Should be defined in child class
+attachment:
+  poll:
+    poll: Опрос
+keyboard:
+  domain: |-
+    %{domain}

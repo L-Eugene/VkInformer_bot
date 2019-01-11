@@ -12,7 +12,7 @@ module Vk
     attr_reader :object
 
     def initialize
-      @object = R18n.set('en', File.join(File.dirname(__FILE__), '../../i18n/'))
+      @object = R18n.set('ru', File.join(File.dirname(__FILE__), '../../i18n/'))
     end
   end
 

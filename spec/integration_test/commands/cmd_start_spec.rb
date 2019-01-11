@@ -9,6 +9,11 @@ describe VkInformerBot do
       @chat = FactoryBot.create(:chat, id: 1, enabled: false)
       allow(@chat).to receive(:send_message) { |msg| msg }
       allow(@vk).to receive(:chat) { @chat }
+
+      Vk::Localization.instance.instance_variable_set(
+        :@object,
+        R18n.set('en', Vk::Localization.instance.object.translation_places.first.dir)
+      )
     end
 
     it 'should enable disabled chat' do
