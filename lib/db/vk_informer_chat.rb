@@ -34,7 +34,7 @@ module Vk
     def status
       kbd = Telegram::Bot::Types::InlineKeyboardMarkup.new
       kbd.inline_keyboard = walls.map(&:keyboard_row)
-      Vk.log.debug kbd
+      Vk.log.debug kbd.inspect
       {
         text: Vk.t.chat.status(enabled: enabled? ? 'enabled' : 'disabled'),
         reply_markup: kbd
