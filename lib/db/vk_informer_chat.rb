@@ -41,13 +41,13 @@ module Vk
       }
     end
 
-    def delete_keyboard
+    def delete_menu
       kbd = Telegram::Bot::Types::InlineKeyboardMarkup.new
       kbd.inline_keyboard = walls.map(&:keyboard_delete)
 
       Vk.log.debug kbd.inspect
 
-      { text: Vk.t.chat.delete_keyboard, reply_markup: kbd }
+      { text: Vk.t.chat.delete_menu, reply_markup: kbd }
     end
 
     def add(wall)
@@ -76,7 +76,7 @@ module Vk
       Vk.tlg.api.edit_message_reply_markup(
         chat_id: chat_id,
         message_id: callback.message.message_id,
-        reply_markup: status[:reply_markup]
+        reply_markup: delete_menu[:reply_markup]
       )
     end
 

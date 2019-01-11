@@ -133,7 +133,7 @@ class VkInformerBot
   end
 
   def cmd_delete(args)
-    return chat.send_message chat.delete_keyboard, 'HTML' if args.empty?
+    return chat.send_message chat.delete_menu, 'HTML' if args.empty?
 
     domain = args.first
 
