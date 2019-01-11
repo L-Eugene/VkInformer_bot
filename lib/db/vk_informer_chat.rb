@@ -66,7 +66,7 @@ module Vk
       raise Vk::NoSuchGroup, chat: self if wall.nil?
 
       walls.delete wall
-      send_text Vk.t.chat.delete(domain: wall.domain_escaped)
+      send_text Vk.t.chat.removed(domain: wall.domain_escaped)
     end
 
     def send_callback_answer(callback, data)
