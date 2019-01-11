@@ -79,7 +79,12 @@ class VkInformerBot
 
     data = JSON.parse callback.data, symbolize_names: true
 
-    __send__(data[:meth], data[:args]) if respond_to? data[:meth].to_sym, true
+    meth = method_from_message(data[:action])
+    args = parse_args(%r{^[\w@]+\s?}, data[:action])
+
+    Vk.log.debug "method: #{meth}, arguments: #{args}"
+
+    __send__(meth, args) if respond_to? meth.to_sym, true
     @chat.send_callback_answer callback, data
   end
 
@@ -88,6 +93,8 @@ class VkInformerBot
 
     meth = method_from_message(message.text)
     args = parse_args(%r{^\/[\w@]+\s?}, message.text)
+
+    Vk.log.debug "method: #{meth}, arguments: #{args}"
 
     __send__(meth, args) if respond_to? meth.to_sym, true
   end
