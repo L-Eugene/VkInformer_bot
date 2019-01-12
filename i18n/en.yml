@@ -29,7 +29,7 @@ chat:
   sending: Sending %{message} to %{chat}
   status: |-
     <strong>Status</strong>: %{enabled}
-  delete_keyboard: |-
+  delete_menu: |-
     ❗️❗️❗️ <strong>WARNING:</strong> This can not be undone. ❗️❗️❗️
 
     Select group you would like to stop watching.

@@ -29,7 +29,7 @@ chat:
   sending: Sending %{message} to %{chat}
   status: |-
     <strong>Состояние</strong>: %{enabled}
-  delete_keyboard: |-
+  delete_menu: |-
     ❗️❗️❗️ <strong>ОСТОРОЖНО:</strong> Действие нельзя отменить. ❗️❗️❗️
 
     Выберите группу, которую вы хотели бы удалить из списка наблюдения.
