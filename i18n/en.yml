@@ -27,8 +27,11 @@ chat:
     It happened because group became private.
     To resume watching this group - add it to watchlist manually when it will be available again.
   sending: Sending %{message} to %{chat}
-  status: |-
-    <strong>Status</strong>: %{enabled}
+  status: !!enabled
+    enabled: |-
+      <strong>Status</strong>: enabled
+    disabled: |-
+      <strong>Status</strong>: disabled
   delete_menu: |-
     ❗️❗️❗️ <strong>WARNING:</strong> This can not be undone. ❗️❗️❗️
 

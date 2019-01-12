@@ -35,10 +35,7 @@ module Vk
 
       Vk.log.debug kbd.inspect
 
-      {
-        text: Vk.t.chat.status(enabled: enabled? ? 'enabled' : 'disabled'),
-        reply_markup: kbd
-      }
+      { text: Vk.t.chat.status(enabled: enabled?), reply_markup: kbd }
     end
 
     def delete_menu

@@ -3,6 +3,8 @@
 require 'r18n-core'
 require 'r18n-rails-api'
 
+require 'r18n/vk_informer_r18n_filters'
+
 # VK informer module
 module Vk
   # Localization singleton
