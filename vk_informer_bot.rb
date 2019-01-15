@@ -64,9 +64,7 @@ class VkInformerBot
 
     log.info Vk.t.scan.start
 
-    return unless Vk::Tlg.available?
-
-    Vk::Wall.process
+    Vk::Wall.process if Vk::Tlg.available?
 
     log.info Vk.t.scan.finish
   rescue StandardError
