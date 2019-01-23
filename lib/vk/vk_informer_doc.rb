@@ -11,7 +11,7 @@ module Vk
     def initialize(domain, node)
       super
 
-      @title = normalize_text node[:doc][:title]
+      @title = node[:doc][:title]
       @url = node[:doc][:url]
       @ext = node[:doc][:ext]
     end
@@ -20,7 +20,7 @@ module Vk
       return gif_hash if gif?
 
       {
-        text: "[#{title}](#{url})",
+        text: "[#{normalize_title title}](#{url})",
         disable_web_page_preview: false
       }
     end
@@ -42,7 +42,7 @@ module Vk
       f.write Vk::Connection.get_file(url)
       {
         document: @file_id || Faraday::UploadIO.new(f.path, 'image/gif'),
-        caption: "#{domain_prefix domain}\n#{title}",
+        caption: "#{domain_prefix domain}\n#{normalize_text title}",
         parse_mode: 'Markdown'
       }
     end

@@ -23,6 +23,10 @@ module Vk
       nil
     end
 
+    def normalize_title(text)
+      text.delete(']')
+    end
+
     def normalize_text(text)
       text.gsub('<br>', "\n").gsub(%r{</?[^>]*>}, '')
           .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')

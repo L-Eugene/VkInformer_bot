@@ -63,7 +63,7 @@ module Vk
     attr_reader :conn
 
     def initialize
-      @conn ||= Faraday.new(url: 'https://api.vk.com') do |faraday|
+      @conn = Faraday.new(url: 'https://api.vk.com') do |faraday|
         faraday.request :url_encoded
         faraday.use FaradayMiddleware::FollowRedirects
         faraday.adapter Faraday.default_adapter
