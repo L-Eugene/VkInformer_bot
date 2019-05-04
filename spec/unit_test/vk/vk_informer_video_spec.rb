@@ -5,8 +5,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 describe Vk::Video do
   before :all do
     @obj = Vk::Video.new(
-        'x',
-        load_json_fixtures(
+      'x',
+      load_json_fixtures(
         File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/video/hash.json'
       )
     )
