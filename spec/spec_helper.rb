@@ -14,7 +14,7 @@ FactoryBot.find_definitions
 
 ActiveRecord::Base.establish_connection(Vk.cfg.options['database'])
 
-def load_json_fix(fname)
+def load_json_fixtures(fname)
   JSON.parse(
     IO.read(fname),
     symbolize_names: true

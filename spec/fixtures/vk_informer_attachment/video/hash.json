@@ -3,6 +3,7 @@
   "video": {
     "id": 123456,
     "owner_id": -321,
+    "duration": 600,
     "title": "Текст на русском",
     "description": "Video Description"
   }

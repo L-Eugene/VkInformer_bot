@@ -5,15 +5,15 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 describe Vk::Link do
   before :all do
     @obj = Vk::Link.new(
-      'x',
-      load_json_fix(
+        'x',
+        load_json_fixtures(
         File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/link/hash.wo_prev.json'
       )
     )
 
     @obj2 = Vk::Link.new(
-      'x',
-      load_json_fix(
+        'x',
+        load_json_fixtures(
         File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/link/hash.w_prev.json'
       )
     )
@@ -55,8 +55,8 @@ describe Vk::Link do
 
       # Object without big image
       obj3 = Vk::Link.new(
-        'x',
-        load_json_fix(
+          'x',
+          load_json_fixtures(
           File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/link/hash.w_prev.small.json'
         )
       )
