@@ -58,7 +58,7 @@ module Vk
     end
 
     def downloaded?
-      @downloaded ||= download!
+      @downloaded = download! if @downloaded.nil?
     end
 
     def video_url

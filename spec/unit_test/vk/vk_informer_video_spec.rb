@@ -7,6 +7,9 @@ describe Vk::Video do
     @data = load_json_fixtures(
       File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/video/hash.json'
     )
+  end
+
+  before :each do
     @obj = Vk::Video.new('x', @data)
   end
 
