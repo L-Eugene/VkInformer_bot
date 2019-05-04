@@ -119,6 +119,7 @@ module Vk
     def send_post(post)
       Vk.log.info Vk.t.chat.sending(message: post.message_id, chat: chat_id)
       post.data.each do |p|
+        Vk.log.debug "Post: #{p.inspect}"
         p.result __send__(p.use_method, p.to_hash)
 
         Vk.log.debug p.to_hash
