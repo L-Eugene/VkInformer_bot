@@ -4,12 +4,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Vk::Video do
   before :all do
-    @obj = Vk::Video.new(
-      'x',
-      load_json_fixtures(
-        File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/video/hash.json'
-      )
+    @data = load_json_fixtures(
+      File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/video/hash.json'
     )
+    @obj = Vk::Video.new('x', @data)
   end
 
   describe 'Basic' do
@@ -74,11 +72,14 @@ describe Vk::Video do
       expect(h).to have_key(:caption)
     end
 
-    it 'should not download video if it is too long' do
-      data = load_json_fixtures(File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/video/hash.json')
-      data[:duration] = 20.minutes
+    it 'should not download video longer than 15 minutes' do
+      obj = Vk::Video.new('x', @data.merge(duration: 20.minutes))
 
-      obj = Vk::Video.new('x', data)
+      expect(obj.use_method).to eq :send_message
+    end
+
+    it 'should not download live video' do
+      obj = Vk::Video.new('x', @data.merge(live: 1))
 
       expect(obj.use_method).to eq :send_message
     end
