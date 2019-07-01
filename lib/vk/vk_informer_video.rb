@@ -68,7 +68,7 @@ module Vk
     def default_hash
       {
         text: <<~HTML,
-          Video: <a href='#{video_url}'>#{normalize_text title}</a>
+          Video: <a href='#{video_url}'>#{normalize_title title}</a>
           #{normalize_text description}
           #{domain_prefix domain, :html}
         HTML
