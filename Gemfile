@@ -22,7 +22,7 @@ source 'https://rubygems.org' do
     resolve_gem 'rake'
     resolve_gem 'rspec'
     resolve_gem 'rubocop'
-    resolve_gem 'sqlite3', '~> 1.3.0'
+    resolve_gem 'sqlite3', '~> 1.4.0'
     resolve_gem 'webmock'
   end
 end
