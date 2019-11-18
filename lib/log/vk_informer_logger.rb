@@ -9,6 +9,7 @@ module Vk
     include Singleton
 
     attr_reader :logger
+    attr_accessor :last_reopen
 
     def initialize
       flag = Vk.cfg.options['debug']['flag']
@@ -20,6 +21,8 @@ module Vk
         date_format = datetime.strftime('%Y-%m-%d %H:%M:%S')
         "[#{date_format}] #{severity}: #{msg}\n"
       end
+
+      @last_reopen = Time.now
     end
   end
 
@@ -28,6 +31,7 @@ module Vk
   end
 
   def self.log
+    Vk::Log.instance.logger.reopen if Vk::Log.instance.last_reopen < Time.now - 1.hour
     Vk::Log.instance.logger
   end
 end
