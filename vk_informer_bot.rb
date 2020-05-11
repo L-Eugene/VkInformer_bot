@@ -36,8 +36,8 @@ require 'log/vk_informer_logger'
 require 'telegram/vk_informer_classes'
 require 'db/vk_informer_model'
 require 'r18n/vk_informer_r18n'
-Dir['r18n/vk*.rb'].each { |f| require f }
-Dir['vk/*.rb'].each { |f| require f }
+Dir['r18n/vk*.rb'].sort.each { |f| require f }
+Dir['vk/*.rb'].sort.each { |f| require f }
 
 # Main bot class
 class VkInformerBot

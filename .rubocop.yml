@@ -1,5 +1,6 @@
 AllCops:
   TargetRubyVersion: 2.4
+  NewCops: enable
   Exclude:
     - 'schema.rb'
 
@@ -10,7 +11,7 @@ Style/MixinUsage:
   Exclude:
     - 'Rakefile'
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
 
 Metrics/MethodLength:
