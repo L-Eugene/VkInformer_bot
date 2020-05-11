@@ -24,23 +24,34 @@ describe Vk::Wall do
   end
 
   describe 'Simple utils' do
+    before :each do
+      @wall1 = FactoryBot.create(:wall, id: 1, domain: 'club1')
+      @wall2 = FactoryBot.create(:wall, id: 2, domain: 'club2z')
+      @wall3 = FactoryBot.create(:wall, id: 3, domain: 'noclub15')
+      @wall4 = FactoryBot.create(:wall, id: 4, domain: 'noclubatall')
+      @wall5 = FactoryBot.create(:wall, id: 5, domain: 'club1554757')
+    end
+
     it 'should define if wall is watched' do
-      # watched wall
-      wall1 = FactoryBot.create(:wall, id: 1, domain: '1')
       chat1 = FactoryBot.create(:chat, id: 1, enabled: false)
-      FactoryBot.create(:cwlink, wall: wall1, chat: chat1)
+      FactoryBot.create(:cwlink, wall: @wall1, chat: chat1)
 
       # disabled chats should be ignored
-      expect(wall1.watched?).to be false
+      expect(@wall1.watched?).to be false
       chat1.update_attribute(:enabled, true)
 
       # enabled chat should be counted
-      expect(wall1.reload.watched?).to be true
+      expect(@wall1.reload.watched?).to be true
 
-      # unwatched wall
-      wall2 = FactoryBot.create(:wall, id: 2, domain: '2')
+      expect(@wall2.watched?).to be false
+    end
 
-      expect(wall2.watched?).to be false
+    it 'should detect owner_id' do
+      expect(@wall1.owner_id).to eq '-1'
+      expect(@wall2.owner_id).to eq '0'
+      expect(@wall3.owner_id).to eq '0'
+      expect(@wall4.owner_id).to eq '0'
+      expect(@wall5.owner_id).to eq '-1554757'
     end
   end
 

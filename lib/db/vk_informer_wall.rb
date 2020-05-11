@@ -47,6 +47,13 @@ module Vk
       Vk::Tlg.escape domain
     end
 
+    def owner_id
+      result = domain.scan(%r{^club(\d*)$}).flatten
+      return "-#{result.first}" unless result.empty?
+
+      '0'
+    end
+
     def keyboard_list
       [
         {
@@ -82,6 +89,7 @@ module Vk
         domain: domain,
         count: 30,
         v: 5.36,
+        owner_id: owner_id,
         access_token: Vk::Token.best.key
       )
     end
