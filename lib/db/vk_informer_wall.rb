@@ -8,7 +8,7 @@ module Vk
     has_many :cwlinks
     has_many :chats, through: :cwlinks
 
-    validates_uniqueness_of :domain
+    validates_uniqueness_of :domain, case_sensitive: false
 
     def watched?
       chats.any?(&:enabled?)
