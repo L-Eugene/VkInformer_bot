@@ -5,9 +5,11 @@ module Vk
   class MediaGroup < Attachment
     attr_reader :photos
 
+    # rubocop:disable Lint/MissingSuper
     def initialize(photos)
       @photos = photos
     end
+    # rubocop:enable Lint/MissingSuper
 
     def to_hash
       photos.map(&:to_hash)

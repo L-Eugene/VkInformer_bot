@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
 
 describe Vk::Doc do
   before :each do
     @obj = Vk::Doc.new(
       'x',
       load_json_fixtures(
-        File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/doc/hash.simple.json'
+        "#{File.dirname(__FILE__)}/../../fixtures/vk_informer_attachment/doc/hash.simple.json"
       )
     )
 
     @obj2 = Vk::Doc.new(
       'x',
       load_json_fixtures(
-        File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/doc/hash.gif.json'
+        "#{File.dirname(__FILE__)}/../../fixtures/vk_informer_attachment/doc/hash.gif.json"
       )
     )
   end

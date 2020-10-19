@@ -91,7 +91,7 @@ class VkInformerBot
     @chat = Vk::Chat.find_or_create_by(chat_id: message.chat.id)
 
     meth = method_from_message(message.text)
-    args = parse_args(%r{^\/[\w@]+\s?}, message.text)
+    args = parse_args(%r{^/[\w@]+\s?}, message.text)
 
     Vk.log.debug "method: #{meth}, arguments: #{args}"
 
@@ -100,7 +100,7 @@ class VkInformerBot
 
   def method_from_message(text)
     meth = (text || '').downcase
-    [%r{\@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
+    [%r{@.*$}, %r{\s.*$}, %r{^/}].each { |x| meth.gsub!(x, '') }
 
     log.info Vk.t.log.command(method: meth, chat: chat.chat_id, text: text)
 

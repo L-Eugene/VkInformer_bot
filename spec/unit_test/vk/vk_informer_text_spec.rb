@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
 
 describe Vk::Textual do
   before :all do
     @obj = Vk::Textual.new(
       'x',
       load_json_fixtures(
-        File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/text/hash.json'
+        "#{File.dirname(__FILE__)}/../../fixtures/vk_informer_attachment/text/hash.json"
       )
     )
   end

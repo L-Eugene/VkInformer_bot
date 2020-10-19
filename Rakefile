@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'vk_informer_bot.rb'
+require_relative 'vk_informer_bot'
 require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
 

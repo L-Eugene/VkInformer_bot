@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require File.expand_path("#{File.dirname(__FILE__)}/../../spec_helper")
 
 describe Vk::Video do
   before :all do
     @data = load_json_fixtures(
-      File.dirname(__FILE__) + '/../../fixtures/vk_informer_attachment/video/hash.json'
+      "#{File.dirname(__FILE__)}/../../fixtures/vk_informer_attachment/video/hash.json"
     )
   end
 
