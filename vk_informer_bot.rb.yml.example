@@ -15,6 +15,7 @@ database:
   pool: 5
   min_messages: warning
   timeout: 5000
+  reconnect: true
   username: username
   password: password
   database: database
