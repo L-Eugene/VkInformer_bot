@@ -3,5 +3,5 @@
 require 'r18n-core'
 
 R18n::Filters.add('enabled') do |translation, _config, data|
-  data ? translation['enabled'] : translation['disabled']
+  data[:enabled] ? translation['enabled'] : translation['disabled']
 end
