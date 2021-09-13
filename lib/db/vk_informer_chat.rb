@@ -91,6 +91,8 @@ module Vk
     end
 
     def send_photo(hash)
+      Vk.log.debug hash.inspect
+
       Vk.tlg.api.send_photo({ chat_id: chat_id, photo: hash[:media], caption: hash[:caption] }.merge(hash))
     rescue StandardError
       print_error $ERROR_INFO
