@@ -45,8 +45,7 @@ module Vk
     end
 
     def get_album_image(obj)
-      k = %w[1280 807 604 130 75].find { |x| obj.key? "photo_#{x}".to_sym }
-      k.nil? ? nil : obj["photo_#{k}".to_sym]
+      obj[:sizes].max { |a, b| a[:height] <=> b[:height] }[:url]
     end
   end
 end
