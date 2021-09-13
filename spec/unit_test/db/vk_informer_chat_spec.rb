@@ -26,9 +26,9 @@ describe Vk::Chat do
       long_message = 'x' * Vk::Chat::MAX_LENGTH
       expect(@chat.__send__(:split_message, "#{long_message}\n321")).to contain_exactly("#{long_message}\n", "321\n")
 
-      length = Vk::Chat::MAX_LENGTH * 2 / 400 + 2
+      length = (Vk::Chat::MAX_LENGTH * 2 / 400) + 2
       long_message = length.downto(0).each_with_object(+'') do |_i, s|
-        s << 'i' * 400 << "\n"
+        s << ('i' * 400) << "\n"
       end
       expect(@chat.__send__(:split_message, long_message).size).to eq 3
     end

@@ -108,7 +108,7 @@ class VkInformerBot
   end
 
   def parse_args(preg, msg)
-    msg.gsub(preg, '').gsub(%r{\s+}m, ' ').strip.split(' ')
+    msg.gsub(preg, '').gsub(%r{\s+}m, ' ').strip.split
   end
 
   def cmd_start(_args)
