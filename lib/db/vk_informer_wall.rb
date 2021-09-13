@@ -88,7 +88,7 @@ module Vk
         '/method/wall.get',
         domain: domain,
         count: 30,
-        v: 5.36,
+        v: 5.131,
         owner_id: owner_id,
         access_token: Vk::Token.best.key
       )
