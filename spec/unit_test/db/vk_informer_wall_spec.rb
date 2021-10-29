@@ -66,7 +66,7 @@ describe Vk::Wall do
       fn = 'vk_informer_wall_spec/wall.get.1.json'
       @stub = stub_request(:post, 'https://api.vk.com/method/wall.get')
               .to_return(
-                body: IO.read("#{File.dirname(__FILE__)}/../../fixtures/#{fn}")
+                body: File.read("#{File.dirname(__FILE__)}/../../fixtures/#{fn}")
               )
     end
 

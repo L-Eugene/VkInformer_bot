@@ -16,7 +16,7 @@ ActiveRecord::Base.establish_connection(Vk.cfg.options['database'])
 
 def load_json_fixtures(fname)
   JSON.parse(
-    IO.read(fname),
+    File.read(fname),
     symbolize_names: true
   )
 end
