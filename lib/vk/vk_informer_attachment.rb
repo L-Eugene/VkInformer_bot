@@ -28,9 +28,9 @@ module Vk
     end
 
     def normalize_text(text)
-      text.gsub('<br>', "\n").gsub(%r{</?[^>]*>}, '')
-          .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')
-          .gsub('_', '\_').gsub('*', '\*')
+      (text || '').gsub('<br>', "\n").gsub(%r{</?[^>]*>}, '')
+                  .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')
+                  .gsub('_', '\_').gsub('*', '\*')
     end
 
     def domain_prefix(domain, type = :markdown)
