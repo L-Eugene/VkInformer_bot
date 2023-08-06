@@ -41,22 +41,22 @@ Dir['vk/*.rb'].sort.each { |f| require f }
 
 # Main bot class
 class VkInformerBot
-  attr_reader :token, :client, :log, :chat
+  attr_reader :client, :log, :chat
 
   def initialize
     @client = Vk.tlg
     @log    = Vk.log
   end
 
-  def update(data)
-    update = Telegram::Bot::Types::Update.new(data)
-
-    process_message(update.message) unless update.message.nil?
-    process_callback(update.callback_query) unless update.callback_query.nil?
-  rescue Vk::ErrorBase
-    $ERROR_INFO.process
-  rescue StandardError
-    Vk.log_format($ERROR_INFO)
+  def poll
+    Vk::Tlg.instance.client.listen do |message|
+      process_message(message) if message.is_a? Telegram::Bot::Types::Message
+      process_callback(message) if message.is_a? Telegram::Bot::Types::CallbackQuery
+    rescue Vk::ErrorBase
+      $ERROR_INFO.process
+    rescue StandardError
+      Vk.log_format($ERROR_INFO)
+    end
   end
 
   def scan
