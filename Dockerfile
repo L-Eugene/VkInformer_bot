@@ -5,9 +5,9 @@ RUN bundle config --global frozen 1
 
 WORKDIR /usr/src/app
 
+CMD ["ruby", "run_bot.rb"]
+
 COPY Gemfile Gemfile.lock ./
-RUN bundle install
+RUN bundle config set --local without 'test' && bundle install
 
 COPY . .
-
-CMD ["ruby", "run_bot.rb"]

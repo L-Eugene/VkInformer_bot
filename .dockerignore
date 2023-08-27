@@ -1,0 +1,7 @@
+spec/
+.git*
+.rspec
+.rubocop.yml
+.travis.yml
+vk_informer_bot.rb.yml*
+db/*.sqlite3
