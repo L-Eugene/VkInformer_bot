@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require_relative 'vk_informer_bot'
+require 'cron_parser'
 
 SCHEDULES = [
   '* 5-16 * * *',
