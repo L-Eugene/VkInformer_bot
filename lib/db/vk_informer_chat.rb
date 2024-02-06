@@ -81,41 +81,36 @@ module Vk
       Vk.log.debug hash.inspect
 
       options = { chat_id: chat_id, parse_mode: parse_mode, disable_web_page_preview: true }.merge(hash)
-      split_message(hash[:text]).each { |t| Vk.tlg.api.send_message(options.merge(text: t)) }
-    rescue StandardError
-      print_error $ERROR_INFO
+
+      do_rescued do
+        split_message(hash[:text]).each { |t| Vk.tlg.api.send_message(options.merge(text: t)) }
+      end
     end
 
     def send_text(text, parse_mode = 'Markdown')
-      send_message(text: text, parse_mode: parse_mode)
+      do_rescued { send_message(text: text, parse_mode: parse_mode) }
     end
 
     def send_photo(hash)
       Vk.log.debug hash.inspect
 
-      Vk.tlg.api.send_photo({ chat_id: chat_id, photo: hash[:media], caption: hash[:caption] }.merge(hash))
-    rescue StandardError
-      print_error $ERROR_INFO
+      do_rescued do
+        Vk.tlg.api.send_photo({ chat_id: chat_id, photo: hash[:media], caption: hash[:caption] }.merge(hash))
+      end
     end
 
     def send_media(batch)
       return send_photo batch.first if batch.size == 1
 
-      Vk.tlg.api.send_media_group(chat_id: chat_id, media: batch.to_json)
-    rescue StandardError
-      print_error $ERROR_INFO
+      do_rescued { Vk.tlg.api.send_media_group(chat_id: chat_id, media: batch.to_json) }
     end
 
     def send_video(video)
-      Vk.tlg.api.send_video(video.merge(chat_id: chat_id))
-    rescue StandardError
-      print_error $ERROR_INFO
+      do_rescued { Vk.tlg.api.send_video(video.merge(chat_id: chat_id)) }
     end
 
     def send_document(doc)
-      Vk.tlg.api.send_document(doc.merge(chat_id: chat_id))
-    rescue StandardError
-      print_error $ERROR_INFO
+      do_rescued { Vk.tlg.api.send_document(doc.merge(chat_id: chat_id)) }
     end
 
     def send_post(post)
@@ -129,6 +124,23 @@ module Vk
     end
 
     private
+
+    def do_rescued
+      attempt ||= 1
+      yield
+    rescue Telegram::Bot::Exceptions::ResponseError
+      parameters = JSON.parse($ERROR_INFO.parameters, symbolize_names: true)
+      if parameters.key?(:retry_after) && attempt < 5
+        attempt += 1
+        Vk.log.info "Need try ##{attempt}. Will try again after #{parameters[:retry_after]}s."
+        sleep parameters[:retry_after]
+        retry
+      else
+        print_error $ERROR_INFO
+      end
+    rescue StandardError
+      print_error $ERROR_INFO
+    end
 
     def print_error(err)
       Vk.log_format(err)

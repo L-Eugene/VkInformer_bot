@@ -23,7 +23,7 @@ module Vk
   end
 
   def self.log_format(error_info, type = :error)
-    log.__send__(type, "#{error_info.message}\n#{error_info.backtrace.join("\n")}")
+    log.__send__(type, "#{error_info.message}\n#{error_info.backtrace.join("\n")}\n===========\n#{error_info.inspect}")
   end
 
   def self.log
