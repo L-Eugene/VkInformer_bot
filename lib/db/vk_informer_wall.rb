@@ -30,8 +30,10 @@ module Vk
     def process
       Vk.log.info Vk.t.wall.process(domain: domain)
       records = new_messages
-      records.each { |msg| send_message(msg) }
-      update_last records
+      records.each do |msg|
+        send_message(msg)
+        update_last [msg]
+      end
     end
 
     def update_last(records = new_messages)
