@@ -47,11 +47,13 @@ module Vk
       Vk.const_get(name) if Vk.const_defined?(name)
     end
 
-    def add_attachment(hash)
-      if valid_attachment? hash[:type]
-        data << attachment(hash[:type]).new(domain, hash)
-      else
+    def add_attachment(hash) # rubocop:disable Metrics/AbcSize
+      if !valid_attachment?(hash[:type])
         Vk.log.info Vk.t.error.unsupported(type: hash[:type])
+      elsif !attachment(hash[:type]).valid_data?(hash)
+        Vk.log.info Vk.t.error.invalid_attachment_data
+      else
+        @data << attachment(hash[:type]).new(@domain, hash)
       end
     end
   end

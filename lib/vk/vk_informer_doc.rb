@@ -8,6 +8,14 @@ module Vk
   class Doc < Attachment
     attr_reader :title, :url
 
+    def self.valid_data?(data)
+      f = Tempfile.new(['vk_informer', '.gif'])
+      size = f.write Vk::Connection.get_file(data[:doc][:url])
+
+      # 50 MB limit
+      (size / (1024**2)) < 50
+    end
+
     def initialize(domain, node)
       super
 

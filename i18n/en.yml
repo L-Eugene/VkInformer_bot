@@ -56,6 +56,7 @@ error:
   download: |-
     Download error:
     %{message}
+  invalid_attachment_data: Invalid attachment data.
 exception:
   no_such_group:
     message: Group not found

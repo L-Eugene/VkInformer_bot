@@ -5,6 +5,10 @@ module Vk
   class Attachment
     attr_reader :domain
 
+    def self.valid_data?(_data)
+      true
+    end
+
     def initialize(domain, node)
       @domain = domain
 
