@@ -8,20 +8,13 @@ module Vk
   class Doc < Attachment
     attr_reader :title, :url
 
-    def self.valid_data?(data)
-      f = Tempfile.new(['vk_informer', '.gif'])
-      size = f.write Vk::Connection.get_file(data[:doc][:url])
-
-      # 50 MB limit
-      (size / (1024**2)) < 50
-    end
-
     def initialize(domain, node)
       super
 
       @title = node[:doc][:title]
       @url = node[:doc][:url]
       @ext = node[:doc][:ext]
+      @size = node[:doc][:size]
     end
 
     def to_hash
@@ -56,7 +49,11 @@ module Vk
     end
 
     def gif?
-      @gif ||= title.gsub(%r{\?.*$}, '') =~ %r{\.gif$} || @ext == 'gif'
+      @gif ||= (title.gsub(%r{\?.*$}, '') =~ %r{\.gif$} || @ext == 'gif') && !big?
+    end
+
+    def big?
+      @big ||= @size > 50 * (1024**2)
     end
   end
 end
