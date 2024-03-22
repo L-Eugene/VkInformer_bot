@@ -48,7 +48,7 @@ module Vk
       @file = Tempfile.new('vk_informer_video')
 
       Terrapin::CommandLine
-        .new('youtube-dl', YOUTUBE_DL_PARAMS.join(' '))
+        .new('yt-dlp', YOUTUBE_DL_PARAMS.join(' '))
         .run(path: @file.path, url: video_url)
       true
     rescue StandardError
