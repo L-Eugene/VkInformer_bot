@@ -5,6 +5,7 @@
     "owner_id": 123,
     "title": "file.txt",
     "ext": "txt",
+    "size": 51380224,
     "url": "http://example.com/file.txt"
   }
 }

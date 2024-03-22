@@ -17,6 +17,13 @@ describe Vk::Doc do
         "#{File.dirname(__FILE__)}/../../fixtures/vk_informer_attachment/doc/hash.gif.json"
       )
     )
+
+    @obj3 = Vk::Doc.new(
+      'x',
+      load_json_fixtures(
+        "#{File.dirname(__FILE__)}/../../fixtures/vk_informer_attachment/doc/hash.big.json"
+      )
+    )
   end
 
   describe 'Basic' do
@@ -41,6 +48,14 @@ describe Vk::Doc do
 
     it 'should build result hash for doc if file is not gif' do
       h = @obj.to_hash
+      expect(h).to be_instance_of(Hash)
+      expect(h).to have_key(:text)
+      expect(h).to have_key(:disable_web_page_preview)
+      expect(h[:disable_web_page_preview]).to be false
+    end
+
+    it 'should build result hash for doc if file is bigger than 50 Mb' do
+      h = @obj3.to_hash
       expect(h).to be_instance_of(Hash)
       expect(h).to have_key(:text)
       expect(h).to have_key(:disable_web_page_preview)
