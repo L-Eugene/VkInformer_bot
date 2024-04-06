@@ -5,6 +5,6 @@
     "title": "sometext",
     "description": "link description",
     "target": "internal",
-    "image_src": "http://example.com/image.small.jpg"
+    "photo": "http://example.com/image.small.jpg"
   }
 }

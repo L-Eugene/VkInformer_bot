@@ -10,8 +10,10 @@ module Vk
     def initialize(domain, node)
       super
 
-      @text = "[#{node[:link][:title]}](#{node[:link][:url]})"
-      @preview = get_image(node) if node[:link].key? :image_src
+      title = (node[:link][:title] || '').empty? ? node[:link][:url] : node[:link][:title]
+
+      @text = "[#{title}](#{node[:link][:url]})"
+      @preview = get_image(node) if node[:link].key? :photo
     end
 
     def to_hash
@@ -37,7 +39,7 @@ module Vk
     end
 
     def get_image(node)
-      node[:link][node[:link].key?(:image_big) ? :image_big : :image_src]
+      node[:link][:photo]
     end
 
     def to_hash_text
