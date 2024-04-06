@@ -31,6 +31,7 @@ module Vk
       Vk.log.info Vk.t.wall.process(domain: domain)
       records = new_messages
       records.each do |msg|
+        Vk.log.debug "API message object: #{msg.inspect}"
         send_message(msg)
         update_last [msg]
       end
