@@ -13,7 +13,7 @@ module Vk
       title = (node[:link][:title] || '').empty? ? node[:link][:url] : node[:link][:title]
 
       @text = "[#{title}](#{node[:link][:url]})"
-      @preview = get_image(node) if node[:link].key? :photo
+      @preview = get_album_image(node[:link][:photo]) if node[:link].key? :photo
     end
 
     def to_hash
@@ -36,10 +36,6 @@ module Vk
 
     def preview?
       @preview
-    end
-
-    def get_image(node)
-      node[:link][:photo]
     end
 
     def to_hash_text

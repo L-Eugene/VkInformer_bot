@@ -5,6 +5,13 @@
     "title": "sometext",
     "description": "link description",
     "target": "internal",
-    "photo": "http://example.com/image.small.jpg"
+    "photo": {
+      "id": 23456,
+      "album_id": 12456,
+      "owner_id": 123,
+      "sizes": [
+        { "height": 75, "url": "http://example.com/image.small.jpg" }
+      ]
+    }
   }
 }
