@@ -33,4 +33,12 @@ describe Vk::Album do
       expect(h).to have_key(:caption)
     end
   end
+
+  describe 'Media group resilience' do
+    it 'does not blow up when Telegram returns no result array for a media group' do
+      media_group = Vk::MediaGroup.new([])
+
+      expect { media_group.result({ 'result' => nil }) }.not_to raise_error
+    end
+  end
 end

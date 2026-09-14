@@ -19,11 +19,16 @@ module Vk
     end
 
     def result(hash)
-      hash = hash['result']
-      return photos.first.result hash unless hash.is_a? Array
+      returned = hash['result'] || hash[:result]
+      return unless returned
 
-      hash.each_with_index do |file, index|
-        photos[index].result('result' => file)
+      return photos.first.result(returned) unless returned.is_a?(Array)
+
+      returned.each_with_index do |file, index|
+        photo = photos[index]
+        next unless photo
+
+        photo.result('result' => file)
       end
     end
   end
