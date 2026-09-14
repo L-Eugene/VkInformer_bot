@@ -4,6 +4,7 @@ require 'faraday'
 require 'tempfile'
 require 'uri'
 
+# VK informer namespace
 module Vk
   # Basic class for attachments
   class Attachment
@@ -37,8 +38,8 @@ module Vk
 
     def normalize_text(text)
       (text || '').gsub('<br>', "\n").gsub(%r{</?[^>]*>}, '')
-                   .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')
-                   .gsub('_', '\_').gsub('*', '\*')
+        .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')
+        .gsub('_', '\_').gsub('*', '\*')
     end
 
     def domain_prefix(domain, type = :markdown)
@@ -97,9 +98,7 @@ module Vk
       'bin'
     end
   end
-end
 
-module Vk
   class << self
     attr_accessor :tempfiles
 

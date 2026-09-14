@@ -29,17 +29,17 @@ module Vk
     end
 
     def to_hash
-      downloaded? ? video_hash : default_hash
+      downloaded ? video_hash : default_hash
     end
 
     def use_method
-      downloaded? ? :send_video : :send_message
+      downloaded ? :send_video : :send_message
     end
 
     def result(hash)
       return unless hash.is_a? Hash
 
-      @file_id = hash.dig('result', 'video', 'file_id') if downloaded?
+      @file_id = hash.dig('result', 'video', 'file_id') if downloaded
     end
 
     private
@@ -57,7 +57,7 @@ module Vk
       false
     end
 
-    def downloaded?
+    def downloaded
       @downloaded = download! if @downloaded.nil?
     end
 

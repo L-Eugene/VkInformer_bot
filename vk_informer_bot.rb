@@ -7,25 +7,7 @@ require 'faraday'
 require 'json'
 require 'yaml'
 
-# VK informer module
-module Vk
-  # Config singleton
-  class Config
-    include Singleton
-
-    attr_reader :options
-
-    CONFIG_PATH = "#{__FILE__}.yml"
-
-    def initialize
-      @options = YAML.load_file(CONFIG_PATH)
-    end
-  end
-
-  def self.cfg
-    Vk::Config.instance
-  end
-end
+require 'vk/vk_informer_config'
 
 $LOAD_PATH.unshift(
   File.join(File.dirname(__FILE__), Vk.cfg.options['libdir']),

@@ -153,26 +153,26 @@ module Vk
       print_error e
     end
 
-    def response_error_parameters(e)
-      parsed = parameters_from_exception(e)
+    def response_error_parameters(error)
+      parsed = parameters_from_exception(error)
       return parsed unless parsed.empty?
 
-      parameters_from_response(e)
+      parameters_from_response(error)
     rescue StandardError
       {}
     end
 
-    def parameters_from_exception(e)
-      return {} unless e.respond_to?(:parameters)
+    def parameters_from_exception(error)
+      return {} unless error.respond_to?(:parameters)
 
-      parsed = JSON.parse(e.parameters, symbolize_names: true)
+      parsed = JSON.parse(error.parameters, symbolize_names: true)
       parsed.is_a?(Hash) ? parsed : {}
     rescue StandardError
       {}
     end
 
-    def parameters_from_response(e)
-      response = e.respond_to?(:response) ? e.response : nil
+    def parameters_from_response(error)
+      response = error.respond_to?(:response) ? error.response : nil
       return {} unless response.respond_to?(:body)
 
       payload = JSON.parse(response.body, symbolize_names: true)
@@ -182,11 +182,11 @@ module Vk
       {}
     end
 
-    def webpage_curl_failed?(e)
-      return false unless e.respond_to?(:response)
-      return false unless e.response.respond_to?(:body)
+    def webpage_curl_failed?(error)
+      return false unless error.respond_to?(:response)
+      return false unless error.response.respond_to?(:body)
 
-      body = e.response.body
+      body = error.response.body
       return false if body.to_s.empty?
 
       payload = JSON.parse(body)
@@ -196,9 +196,9 @@ module Vk
       false
     end
 
-    def print_error(e)
-      Vk.log_format(err)
-      update!(enabled: false) if err.message.include? 'was blocked by the user'
+    def print_error(error)
+      Vk.log_format(error)
+      update!(enabled: false) if error.message.include? 'was blocked by the user'
     end
 
     def split_message(text)
