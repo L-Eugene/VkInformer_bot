@@ -83,20 +83,17 @@ module Vk
       options = { chat_id: chat_id, parse_mode: parse_mode, disable_web_page_preview: true }.merge(hash)
 
       do_rescued do
-        split_message(hash[:text]).each do |t|
-          message_options = options.merge(text: t)
-          begin
-            Vk.tlg.api.send_message(message_options)
-          rescue Telegram::Bot::Exceptions::ResponseError => err
-            if webpage_curl_failed?(err) && !message_options[:disable_web_page_preview]
-              Vk.log.info 'WEBPAGE_CURL_FAILED while sending message. Retrying without webpage preview.'
-              Vk.tlg.api.send_message(message_options.merge(disable_web_page_preview: true))
-            else
-              raise
-            end
-          end
-        end
+        split_message(hash[:text]).each { |t| send_message_part(options.merge(text: t)) }
       end
+    end
+
+    def send_message_part(message_options)
+      Vk.tlg.api.send_message(message_options)
+    rescue Telegram::Bot::Exceptions::ResponseError => e
+      raise unless webpage_curl_failed?(e) && !message_options[:disable_web_page_preview]
+
+      Vk.log.info 'WEBPAGE_CURL_FAILED while sending message. Retrying without webpage preview.'
+      Vk.tlg.api.send_message(message_options.merge(disable_web_page_preview: true))
     end
 
     def send_text(text, parse_mode = 'Markdown')
@@ -140,8 +137,8 @@ module Vk
     def do_rescued
       attempt ||= 1
       yield
-    rescue Telegram::Bot::Exceptions::ResponseError => err
-      parameters = response_error_parameters(err)
+    rescue Telegram::Bot::Exceptions::ResponseError => e
+      parameters = response_error_parameters(e)
       retry_after = parameters[:retry_after]
 
       if retry_after && attempt < 5
@@ -150,19 +147,32 @@ module Vk
         sleep retry_after
         retry
       else
-        print_error err
+        print_error e
       end
-    rescue StandardError => err
-      print_error err
+    rescue StandardError => e
+      print_error e
     end
 
-    def response_error_parameters(err)
-      if err.respond_to?(:parameters)
-        parsed = JSON.parse(err.parameters, symbolize_names: true)
-        return parsed.is_a?(Hash) ? parsed : {}
-      end
+    def response_error_parameters(e)
+      parsed = parameters_from_exception(e)
+      return parsed unless parsed.empty?
 
-      response = err.respond_to?(:response) ? err.response : nil
+      parameters_from_response(e)
+    rescue StandardError
+      {}
+    end
+
+    def parameters_from_exception(e)
+      return {} unless e.respond_to?(:parameters)
+
+      parsed = JSON.parse(e.parameters, symbolize_names: true)
+      parsed.is_a?(Hash) ? parsed : {}
+    rescue StandardError
+      {}
+    end
+
+    def parameters_from_response(e)
+      response = e.respond_to?(:response) ? e.response : nil
       return {} unless response.respond_to?(:body)
 
       payload = JSON.parse(response.body, symbolize_names: true)
@@ -172,11 +182,11 @@ module Vk
       {}
     end
 
-    def webpage_curl_failed?(err)
-      return false unless err.respond_to?(:response)
-      return false unless err.response.respond_to?(:body)
+    def webpage_curl_failed?(e)
+      return false unless e.respond_to?(:response)
+      return false unless e.response.respond_to?(:body)
 
-      body = err.response.body
+      body = e.response.body
       return false if body.to_s.empty?
 
       payload = JSON.parse(body)
@@ -186,7 +196,7 @@ module Vk
       false
     end
 
-    def print_error(err)
+    def print_error(e)
       Vk.log_format(err)
       update!(enabled: false) if err.message.include? 'was blocked by the user'
     end

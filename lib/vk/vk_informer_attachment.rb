@@ -37,8 +37,8 @@ module Vk
 
     def normalize_text(text)
       (text || '').gsub('<br>', "\n").gsub(%r{</?[^>]*>}, '')
-                  .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')
-                  .gsub('_', '\_').gsub('*', '\*')
+                   .gsub(%r{\[((?:id|club)\d*)\|([^\]]*)\]}, '[\2](https://vk.com/\1)')
+                   .gsub('_', '\_').gsub('*', '\*')
     end
 
     def domain_prefix(domain, type = :markdown)
@@ -102,14 +102,14 @@ end
 module Vk
   class << self
     attr_accessor :tempfiles
-  end
 
-  def self.cleanup_tempfiles
-    Array(tempfiles).each do |file|
-      file.close! if file.respond_to?(:close!) && file.respond_to?(:path)
-      file.unlink if file.respond_to?(:unlink)
+    def cleanup_tempfiles
+      Array(tempfiles).each do |file|
+        file.close! if file.respond_to?(:close!) && file.respond_to?(:path)
+        file.unlink if file.respond_to?(:unlink)
+      end
+
+      self.tempfiles = []
     end
-
-    self.tempfiles = []
   end
 end
