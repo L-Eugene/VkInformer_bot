@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 require 'vk/vk_informer_attachment'
+require 'vk/vk_informer_photo_variants'
 
 module Vk
   # Sending URL attached to message
   class Link < Attachment
+    include PhotoVariants
+
     attr_reader :text
 
     def initialize(domain, node)
@@ -14,29 +17,32 @@ module Vk
 
       @text = "[#{title}](#{node[:link][:url]})"
       @preview = get_album_image(node[:link][:photo]) if node[:link].key? :photo
-      @upload_io = nil
     end
 
     def to_hash
       preview? ? to_hash_image : to_hash_text
     end
 
-    def result(hash)
-      return unless hash.is_a? Hash
-
-      return if hash.dig('result', 'photo').nil?
-
-      @file_id = hash.dig('result', 'photo').last['file_id']
+    def use_method
+      preview? ? super : :send_message
     end
 
-    def use_method
-      @upload_io ? :send_photo : :send_message
+    def variants
+      preview? ? super : [[:send_message, to_hash_text]]
+    end
+
+    def photo_url
+      @preview
+    end
+
+    def fallback_message
+      to_hash_text
     end
 
     private
 
     def preview?
-      @preview
+      !@preview.nil?
     end
 
     def to_hash_text
@@ -47,23 +53,15 @@ module Vk
     end
 
     def to_hash_image
-      @upload_io = download_url_to_uploadio(@preview, 'image/jpeg')
-      if @upload_io
-        {
-          type: 'photo',
-          media: @file_id || @upload_io,
-          caption: <<~TEXT,
-            #{domain_prefix domain}
-            #{text}
-          TEXT
-          parse_mode: 'Markdown'
-        }
-      else
-        {
-          text: text,
-          disable_web_page_preview: false
-        }
-      end
+      {
+        type: 'photo',
+        media: @file_id || @preview,
+        caption: <<~TEXT,
+          #{domain_prefix domain}
+          #{text}
+        TEXT
+        parse_mode: 'Markdown'
+      }
     end
   end
 end

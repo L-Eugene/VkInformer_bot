@@ -7,7 +7,7 @@ require 'faraday'
 require 'json'
 require 'yaml'
 
-require 'vk/vk_informer_config'
+require_relative 'lib/vk/vk_informer_config'
 
 $LOAD_PATH.unshift(
   File.join(File.dirname(__FILE__), Vk.cfg.options['libdir']),

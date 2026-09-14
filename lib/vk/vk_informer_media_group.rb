@@ -18,13 +18,21 @@ module Vk
       :send_media
     end
 
-    def result(hash)
-      hash = hash['result']
-      return photos.first.result hash unless hash.is_a? Array
-
-      hash.each_with_index do |file, index|
-        photos[index].result('result' => file)
+    # URLs -> uploaded copies (only if every photo downloaded) -> each photo on its own ladder
+    def variants
+      Enumerator.new do |y|
+        y << [:send_media, to_hash]
+        uploads = photos.map(&:uploaded_hash)
+        y << [:send_media, uploads] if uploads.all?
+        y << [:deliver_each, photos]
       end
+    end
+
+    def result(hash)
+      messages = hash['result'] if hash.is_a?(Hash)
+      return unless messages.is_a?(Array)
+
+      messages.zip(photos) { |message, photo| photo&.result('result' => message) }
     end
   end
 end

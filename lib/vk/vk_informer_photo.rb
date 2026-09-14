@@ -1,44 +1,34 @@
 # frozen_string_literal: true
 
 require 'vk/vk_informer_attachment'
+require 'vk/vk_informer_photo_variants'
 
 module Vk
   # Photo Attachment
   class Photo < Attachment
+    include PhotoVariants
+
     attr_reader :media
 
     def initialize(domain, node)
       super
       @media = get_album_image node[:photo]
-      @upload_io = nil
-      @downloaded = false
     end
 
     def to_hash
-      return nil unless media
-
-      @upload_io = download_url_to_uploadio(media, 'image/jpeg')
-      if @upload_io
-        {
-          type: 'photo',
-          media: @file_id || @upload_io,
-          caption: domain_prefix(domain, :plain)
-        }
-      else
-        fallback_link_message(media, domain)
-      end
+      {
+        type: 'photo',
+        media: @file_id || media,
+        caption: domain_prefix(domain, :plain)
+      }
     end
 
-    def use_method
-      @upload_io ? :send_photo : :send_message
+    def photo_url
+      media
     end
 
-    def result(hash)
-      return unless hash.is_a? Hash
-
-      return if hash.dig('result', 'photo').nil?
-
-      @file_id = hash.dig('result', 'photo').last['file_id']
+    def fallback_message
+      fallback_link_message(media, domain)
     end
   end
 end
