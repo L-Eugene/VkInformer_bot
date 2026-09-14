@@ -77,12 +77,12 @@ module Vk
       )
     end
 
-    def send_message(hash, parse_mode = 'Markdown')
+    def send_message(hash, parse_mode = 'Markdown', attachment = nil)
       Vk.log.debug hash.inspect
 
       options = { chat_id: chat_id, parse_mode: parse_mode, disable_web_page_preview: true }.merge(hash)
 
-      do_rescued do
+      do_rescued(hash, attachment) do
         split_message(hash[:text]).each { |t| send_message_part(options.merge(text: t)) }
       end
     end
@@ -100,33 +100,33 @@ module Vk
       do_rescued { send_message(text: text, parse_mode: parse_mode) }
     end
 
-    def send_photo(hash)
+    def send_photo(hash, attachment = nil)
       Vk.log.debug hash.inspect
 
-      do_rescued do
+      do_rescued(hash, attachment) do
         Vk.tlg.api.send_photo({ chat_id: chat_id, photo: hash[:media], caption: hash[:caption] }.merge(hash))
       end
     end
 
-    def send_media(batch)
-      return send_photo batch.first if batch.size == 1
+    def send_media(batch, attachment = nil)
+      return send_photo(batch.first, attachment) if batch.size == 1
 
-      do_rescued { Vk.tlg.api.send_media_group(chat_id: chat_id, media: batch.to_json) }
+      do_rescued(batch, attachment) { Vk.tlg.api.send_media_group(chat_id: chat_id, media: batch.to_json) }
     end
 
-    def send_video(video)
-      do_rescued { Vk.tlg.api.send_video(video.merge(chat_id: chat_id)) }
+    def send_video(video, attachment = nil)
+      do_rescued(video, attachment) { Vk.tlg.api.send_video(video.merge(chat_id: chat_id)) }
     end
 
-    def send_document(doc)
-      do_rescued { Vk.tlg.api.send_document(doc.merge(chat_id: chat_id)) }
+    def send_document(doc, attachment = nil)
+      do_rescued(doc, attachment) { Vk.tlg.api.send_document(doc.merge(chat_id: chat_id)) }
     end
 
     def send_post(post)
       Vk.log.info Vk.t.chat.sending(message: post.message_id, chat: chat_id)
       post.data.each do |p|
         Vk.log.debug "Post: #{p.inspect}"
-        p.result __send__(p.use_method, p.to_hash)
+        p.result __send__(p.use_method, p.to_hash, p)
 
         Vk.log.debug p.to_hash
       end
@@ -134,23 +134,52 @@ module Vk
 
     private
 
-    def do_rescued
+    # rubocop:disable-next Metrics/MethodLength
+    def do_rescued(payload = nil, attachment = nil)
       attempt ||= 1
       yield
     rescue Telegram::Bot::Exceptions::ResponseError => e
-      parameters = response_error_parameters(e)
-      retry_after = parameters[:retry_after]
-
+      params = response_error_parameters(e)
+      retry_after = params[:retry_after]
       if retry_after && attempt < 5
         attempt += 1
         Vk.log.info "Need try ##{attempt}. Will try again after #{retry_after}s."
         sleep retry_after
         retry
+      elsif webpage_curl_failed?(e)
+        dispatch_webpage_curl_failed(e, payload, attachment)
       else
         print_error e
       end
     rescue StandardError => e
       print_error e
+    end
+
+    def dispatch_webpage_curl_failed(error, payload, attachment)
+      fallback = attachment.respond_to?(:fallback_for) ? attachment.fallback_for(error, payload) : nil
+      dispatch_fallback(fallback, payload, attachment)
+    end
+
+    def dispatch_fallback(fallback, payload, attachment)
+      return dispatch_url_message(payload, attachment) unless fallback.is_a?(Hash)
+
+      return send_message(fallback) if fallback.key?(:text)
+      return send_photo(fallback, attachment) if fallback[:type].to_s == 'photo'
+
+      dispatch_url_message(payload, attachment)
+    rescue StandardError => e
+      print_error e
+    end
+
+    def dispatch_url_message(payload, attachment)
+      media = payload.is_a?(Hash) ? (payload[:media] || payload['media'] || payload[:url]) : nil
+      return unless media.to_s.match?(%r{^https?://})
+
+      if attachment.respond_to?(:fallback_link_message)
+        send_message(attachment.fallback_link_message(media, nil))
+      else
+        send_message(text: "[#{media}](#{media})", parse_mode: 'Markdown', disable_web_page_preview: false)
+      end
     end
 
     def response_error_parameters(error)

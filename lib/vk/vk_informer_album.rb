@@ -16,26 +16,20 @@ module Vk
       @media = get_album_image node[:album][:thumb]
 
       @title = node[:album][:title]
-      @upload_io = nil
     end
 
     def to_hash
       return nil unless media
 
-      @upload_io = download_url_to_uploadio(media, 'image/jpeg')
-      if @upload_io
-        {
-          type: 'photo',
-          media: @file_id || @upload_io,
-          caption: "#{domain_prefix domain, :plain} #{title}: #{url}"
-        }
-      else
-        fallback_link_message(url, title)
-      end
+      {
+        type: 'photo',
+        media: @file_id || media,
+        caption: "#{domain_prefix domain, :plain} #{title}: #{url}"
+      }
     end
 
     def use_method
-      @upload_io ? :send_photo : :send_message
+      :send_photo
     end
 
     def result(hash)

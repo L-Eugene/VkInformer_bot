@@ -70,7 +70,7 @@ module Vk
       [
         {
           text: Vk.t.keyboard.domain(domain: domain),
-          callback_data: { action: "delete #{domain}", update: true }.to_json
+          callback_data: JSON.generate(action: "delete #{domain}", update: true)
         }
       ]
     end

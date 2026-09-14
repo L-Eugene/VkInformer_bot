@@ -24,6 +24,10 @@ describe Vk::Link do
       expect(@obj).to respond_to(:to_hash, :use_method)
     end
 
+    it 'should expose a default attachment fallback hook for WEBPAGE_CURL_FAILED recovery' do
+      expect(@obj).to respond_to(:fallback_for)
+    end
+
     it 'should use send_message API call if no preview given' do
       expect(@obj.use_method).to eq :send_message
     end

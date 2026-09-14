@@ -79,6 +79,22 @@ module Vk
       nil
     end
 
+    def fallback_for(_error, payload)
+      return nil unless payload.is_a?(Hash)
+
+      media = payload[:media] || payload['media'] || payload[:url]
+      return nil if media.to_s.empty?
+
+      return fallback_link_message(media, nil) unless payload[:type].to_s == 'photo'
+
+      upload_io = download_url_to_uploadio(media, 'image/jpeg')
+      return fallback_link_message(media, nil) unless upload_io
+
+      payload = payload.dup
+      payload[:media] = upload_io
+      payload
+    end
+
     def fallback_link_message(url, label = nil)
       label ||= url
       {
