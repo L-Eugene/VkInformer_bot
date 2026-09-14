@@ -83,7 +83,19 @@ module Vk
       options = { chat_id: chat_id, parse_mode: parse_mode, disable_web_page_preview: true }.merge(hash)
 
       do_rescued do
-        split_message(hash[:text]).each { |t| Vk.tlg.api.send_message(options.merge(text: t)) }
+        split_message(hash[:text]).each do |t|
+          message_options = options.merge(text: t)
+          begin
+            Vk.tlg.api.send_message(message_options)
+          rescue Telegram::Bot::Exceptions::ResponseError => err
+            if webpage_curl_failed?(err) && !message_options[:disable_web_page_preview]
+              Vk.log.info 'WEBPAGE_CURL_FAILED while sending message. Retrying without webpage preview.'
+              Vk.tlg.api.send_message(message_options.merge(disable_web_page_preview: true))
+            else
+              raise
+            end
+          end
+        end
       end
     end
 
@@ -128,18 +140,50 @@ module Vk
     def do_rescued
       attempt ||= 1
       yield
-    rescue Telegram::Bot::Exceptions::ResponseError
-      parameters = JSON.parse($ERROR_INFO.parameters, symbolize_names: true)
-      if parameters.key?(:retry_after) && attempt < 5
+    rescue Telegram::Bot::Exceptions::ResponseError => err
+      parameters = response_error_parameters(err)
+      retry_after = parameters[:retry_after]
+
+      if retry_after && attempt < 5
         attempt += 1
-        Vk.log.info "Need try ##{attempt}. Will try again after #{parameters[:retry_after]}s."
-        sleep parameters[:retry_after]
+        Vk.log.info "Need try ##{attempt}. Will try again after #{retry_after}s."
+        sleep retry_after
         retry
       else
-        print_error $ERROR_INFO
+        print_error err
       end
+    rescue StandardError => err
+      print_error err
+    end
+
+    def response_error_parameters(err)
+      if err.respond_to?(:parameters)
+        parsed = JSON.parse(err.parameters, symbolize_names: true)
+        return parsed.is_a?(Hash) ? parsed : {}
+      end
+
+      response = err.respond_to?(:response) ? err.response : nil
+      return {} unless response.respond_to?(:body)
+
+      payload = JSON.parse(response.body, symbolize_names: true)
+      params = payload[:parameters] || payload['parameters']
+      params.is_a?(Hash) ? params : {}
     rescue StandardError
-      print_error $ERROR_INFO
+      {}
+    end
+
+    def webpage_curl_failed?(err)
+      return false unless err.respond_to?(:response)
+      return false unless err.response.respond_to?(:body)
+
+      body = err.response.body
+      return false if body.to_s.empty?
+
+      payload = JSON.parse(body)
+      description = payload['description'] || payload[:description]
+      description.to_s.include?('WEBPAGE_CURL_FAILED')
+    rescue StandardError
+      false
     end
 
     def print_error(err)

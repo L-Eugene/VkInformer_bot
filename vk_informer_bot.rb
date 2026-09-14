@@ -69,6 +69,8 @@ class VkInformerBot
     log.info Vk.t.scan.finish
   rescue StandardError
     Vk.log_format($ERROR_INFO)
+  ensure
+    Vk.cleanup_tempfiles
   end
 
   private

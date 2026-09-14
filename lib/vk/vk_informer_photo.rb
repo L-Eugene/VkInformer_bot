@@ -10,20 +10,27 @@ module Vk
     def initialize(domain, node)
       super
       @media = get_album_image node[:photo]
+      @upload_io = nil
+      @downloaded = false
     end
 
     def to_hash
       return nil unless media
 
-      {
-        type: 'photo',
-        media: @file_id || media,
-        caption: domain_prefix(domain, :plain)
-      }
+      @upload_io = download_url_to_uploadio(media, 'image/jpeg')
+      if @upload_io
+        {
+          type: 'photo',
+          media: @file_id || @upload_io,
+          caption: domain_prefix(domain, :plain)
+        }
+      else
+        fallback_link_message(media, domain)
+      end
     end
 
     def use_method
-      :send_photo
+      @upload_io ? :send_photo : :send_message
     end
 
     def result(hash)

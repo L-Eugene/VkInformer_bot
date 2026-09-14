@@ -14,6 +14,7 @@ module Vk
 
       @text = "[#{title}](#{node[:link][:url]})"
       @preview = get_album_image(node[:link][:photo]) if node[:link].key? :photo
+      @upload_io = nil
     end
 
     def to_hash
@@ -29,7 +30,7 @@ module Vk
     end
 
     def use_method
-      preview? ? :send_photo : :send_message
+      @upload_io ? :send_photo : :send_message
     end
 
     private
@@ -46,15 +47,23 @@ module Vk
     end
 
     def to_hash_image
-      {
-        type: 'photo',
-        media: @file_id || @preview,
-        caption: <<~TEXT,
-          #{domain_prefix domain}
-          #{text}
-        TEXT
-        parse_mode: 'Markdown'
-      }
+      @upload_io = download_url_to_uploadio(@preview, 'image/jpeg')
+      if @upload_io
+        {
+          type: 'photo',
+          media: @file_id || @upload_io,
+          caption: <<~TEXT,
+            #{domain_prefix domain}
+            #{text}
+          TEXT
+          parse_mode: 'Markdown'
+        }
+      else
+        {
+          text: text,
+          disable_web_page_preview: false
+        }
+      end
     end
   end
 end

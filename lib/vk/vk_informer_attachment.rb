@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require 'faraday'
+require 'tempfile'
+require 'uri'
+
 module Vk
   # Basic class for attachments
   class Attachment
@@ -51,5 +55,61 @@ module Vk
     def get_album_image(obj)
       obj[:sizes].max { |a, b| a[:height] <=> b[:height] }[:url]
     end
+
+    def download_url_to_uploadio(url, mime = 'image/jpeg')
+      return nil if url.to_s.empty?
+
+      uri = URI.parse(url)
+      return nil unless %w[http https].include?(uri.scheme)
+
+      resp = Faraday.get(url)
+      return nil unless resp.success?
+
+      file = Tempfile.new(['vk_informer_attachment', ".#{mime_to_ext(mime)}"])
+      file.binmode
+      file.write(resp.body)
+      file.rewind
+
+      Vk.tempfiles ||= []
+      Vk.tempfiles << file
+
+      Faraday::UploadIO.new(file.path, mime)
+    rescue StandardError
+      nil
+    end
+
+    def fallback_link_message(url, label = nil)
+      label ||= url
+      {
+        text: "[#{label}](#{url})",
+        disable_web_page_preview: false,
+        parse_mode: 'Markdown'
+      }
+    end
+
+    private
+
+    def mime_to_ext(mime)
+      return 'jpg' if mime == 'image/jpeg'
+      return 'png' if mime == 'image/png'
+      return 'gif' if mime == 'image/gif'
+
+      'bin'
+    end
+  end
+end
+
+module Vk
+  class << self
+    attr_accessor :tempfiles
+  end
+
+  def self.cleanup_tempfiles
+    Array(tempfiles).each do |file|
+      file.close! if file.respond_to?(:close!) && file.respond_to?(:path)
+      file.unlink if file.respond_to?(:unlink)
+    end
+
+    self.tempfiles = []
   end
 end
