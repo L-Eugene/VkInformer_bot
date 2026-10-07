@@ -14,6 +14,8 @@ module Vk
     WATCH_LIMIT = 10
     # Maximal telegram message length
     MAX_LENGTH  = 4080
+    # Bad Request errors caused by the chat, not by the sent content
+    NOT_CONTENT_ERRORS = ['chat not found', 'not enough rights'].freeze
 
     after_create :init
 
@@ -78,122 +80,117 @@ module Vk
     end
 
     def send_message(hash, parse_mode = 'Markdown')
-      Vk.log.debug hash.inspect
-
-      options = { chat_id: chat_id, parse_mode: parse_mode, disable_web_page_preview: true }.merge(hash)
-
-      do_rescued do
-        split_message(hash[:text]).each { |t| send_message_part(options.merge(text: t)) }
-      end
-    end
-
-    def send_message_part(message_options)
-      Vk.tlg.api.send_message(message_options)
-    rescue Telegram::Bot::Exceptions::ResponseError => e
-      raise unless webpage_curl_failed?(e) && !message_options[:disable_web_page_preview]
-
-      Vk.log.info 'WEBPAGE_CURL_FAILED while sending message. Retrying without webpage preview.'
-      Vk.tlg.api.send_message(message_options.merge(disable_web_page_preview: true))
+      do_rescued { post_message(hash, parse_mode) }
     end
 
     def send_text(text, parse_mode = 'Markdown')
       do_rescued { send_message(text: text, parse_mode: parse_mode) }
     end
 
-    def send_photo(hash)
-      Vk.log.debug hash.inspect
-
-      do_rescued do
-        Vk.tlg.api.send_photo({ chat_id: chat_id, photo: hash[:media], caption: hash[:caption] }.merge(hash))
-      end
-    end
-
-    def send_media(batch)
-      return send_photo batch.first if batch.size == 1
-
-      do_rescued { Vk.tlg.api.send_media_group(chat_id: chat_id, media: batch.to_json) }
-    end
-
-    def send_video(video)
-      do_rescued { Vk.tlg.api.send_video(video.merge(chat_id: chat_id)) }
-    end
-
-    def send_document(doc)
-      do_rescued { Vk.tlg.api.send_document(doc.merge(chat_id: chat_id)) }
-    end
-
     def send_post(post)
       Vk.log.info Vk.t.chat.sending(message: post.message_id, chat: chat_id)
-      post.data.each do |p|
-        Vk.log.debug "Post: #{p.inspect}"
-        p.result __send__(p.use_method, p.to_hash)
+      post.data.each { |attachment| deliver(attachment) }
+    end
 
-        Vk.log.debug p.to_hash
+    # Walks attachment variants (e.g. URL -> upload -> text link) until Telegram accepts one
+    def deliver(attachment)
+      do_rescued do
+        attachment.variants.each do |method, payload|
+          response = send_variant(method, payload)
+          return attachment.result(response) unless response.nil?
+        end
+        Vk.log.error "All delivery variants were rejected for #{attachment.class}"
       end
     end
 
     private
 
-    def do_rescued
-      attempt ||= 1
-      yield
+    # Telegram response, or nil if Telegram rejected the content and next variant should be tried
+    def send_variant(method, payload)
+      Vk.log.debug "#{method}: #{payload.inspect}"
+      with_retries { raw_send(method, payload) }
     rescue Telegram::Bot::Exceptions::ResponseError => e
-      parameters = response_error_parameters(e)
-      retry_after = parameters[:retry_after]
+      raise unless rejected?(e)
 
-      if retry_after && attempt < 5
-        attempt += 1
-        Vk.log.info "Need try ##{attempt}. Will try again after #{retry_after}s."
-        sleep retry_after
-        retry
-      else
-        print_error e
+      Vk.log.info "#{method} rejected (#{error_description(e)}). Trying next variant."
+      nil
+    end
+
+    def raw_send(method, payload)
+      case method
+      when :send_message then post_message(payload)
+      when :send_photo then post_photo(payload)
+      when :send_media then post_media(payload)
+      when :deliver_each then payload.each { |attachment| deliver(attachment) }
+      else Vk.tlg.api.__send__(method, payload.merge(chat_id: chat_id))
       end
+    end
+
+    def post_message(hash, parse_mode = 'Markdown')
+      options = { chat_id: chat_id, parse_mode: parse_mode, disable_web_page_preview: true }.merge(hash)
+      split_message(hash[:text]).each { |t| send_message_part(options.merge(text: t)) }
+    end
+
+    def send_message_part(message_options)
+      Vk.tlg.api.send_message(message_options)
+    rescue Telegram::Bot::Exceptions::ResponseError => e
+      raise unless error_description(e).include?('WEBPAGE_CURL_FAILED') && !message_options[:disable_web_page_preview]
+
+      Vk.log.info 'WEBPAGE_CURL_FAILED while sending message. Retrying without webpage preview.'
+      Vk.tlg.api.send_message(message_options.merge(disable_web_page_preview: true))
+    end
+
+    def post_photo(hash)
+      Vk.tlg.api.send_photo({ chat_id: chat_id, photo: hash[:media] }.merge(hash.except(:type, :media)))
+    end
+
+    # Uploaded files are passed as separate multipart fields referenced by attach://
+    def post_media(batch)
+      files = {}
+      media = batch.each_with_index.map do |item, index|
+        next item unless item[:media].is_a?(Faraday::UploadIO)
+
+        files[:"photo#{index}"] = item[:media]
+        item.merge(media: "attach://photo#{index}")
+      end
+
+      Vk.tlg.api.send_media_group(chat_id: chat_id, media: media.to_json, **files)
+    end
+
+    def do_rescued(&block)
+      with_retries(&block)
     rescue StandardError => e
       print_error e
     end
 
-    def response_error_parameters(error)
-      parsed = parameters_from_exception(error)
-      return parsed unless parsed.empty?
+    def with_retries
+      attempt ||= 1
+      yield
+    rescue Telegram::Bot::Exceptions::ResponseError => e
+      retry_after = error_payload(e).dig('parameters', 'retry_after')
+      raise unless retry_after && attempt < 5
 
-      parameters_from_response(error)
-    rescue StandardError
-      {}
+      attempt += 1
+      Vk.log.info "Need try ##{attempt}. Will try again after #{retry_after}s."
+      sleep retry_after
+      retry
     end
 
-    def parameters_from_exception(error)
-      return {} unless error.respond_to?(:parameters)
-
-      parsed = JSON.parse(error.parameters, symbolize_names: true)
-      parsed.is_a?(Hash) ? parsed : {}
-    rescue StandardError
-      {}
+    # Bad Request means Telegram did not accept the content (URL, file, markup),
+    # unless it is about the chat itself: then other variants will not help either.
+    def rejected?(error)
+      error.error_code.to_i == 400 && NOT_CONTENT_ERRORS.none? { |s| error_description(error).include?(s) }
     end
 
-    def parameters_from_response(error)
-      response = error.respond_to?(:response) ? error.response : nil
-      return {} unless response.respond_to?(:body)
-
-      payload = JSON.parse(response.body, symbolize_names: true)
-      params = payload[:parameters] || payload['parameters']
-      params.is_a?(Hash) ? params : {}
-    rescue StandardError
-      {}
+    def error_description(error)
+      error_payload(error)['description'].to_s
     end
 
-    def webpage_curl_failed?(error)
-      return false unless error.respond_to?(:response)
-      return false unless error.response.respond_to?(:body)
-
-      body = error.response.body
-      return false if body.to_s.empty?
-
-      payload = JSON.parse(body)
-      description = payload['description'] || payload[:description]
-      description.to_s.include?('WEBPAGE_CURL_FAILED')
+    def error_payload(error)
+      payload = JSON.parse(error.response.body)
+      payload.is_a?(Hash) ? payload : {}
     rescue StandardError
-      false
+      {}
     end
 
     def print_error(error)
