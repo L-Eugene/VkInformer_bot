@@ -19,6 +19,10 @@ describe Vk::Link do
     )
   end
 
+  before :each do
+    stub_request(:get, %r{\Ahttp://example\.com/}).to_return(status: 200, body: 'image')
+  end
+
   describe 'Basic' do
     it 'should provide needed methods' do
       expect(@obj).to respond_to(:to_hash, :use_method)
@@ -29,7 +33,14 @@ describe Vk::Link do
     end
 
     it 'should use send_photo API call if preview given' do
+      @obj2.to_hash
       expect(@obj2.use_method).to eq :send_photo
+    end
+
+    it 'should fall back to send_message if preview download fails' do
+      stub_request(:get, %r{\Ahttp://example\.com/}).to_return(status: 404)
+      expect(@obj2.to_hash).to have_key(:text)
+      expect(@obj2.use_method).to eq :send_message
     end
   end
 
@@ -49,7 +60,8 @@ describe Vk::Link do
       expect(h).to have_key(:type)
       expect(h[:type]).to eq 'photo'
       expect(h).to have_key(:media)
-      expect(h[:media]).to eq 'http://example.com/image.jpg'
+      expect(h[:media]).to be_a(Faraday::UploadIO)
+      expect(a_request(:get, 'http://example.com/image.jpg')).to have_been_made
       expect(h).to have_key(:caption)
       expect(h).to have_key(:parse_mode)
 
@@ -65,7 +77,8 @@ describe Vk::Link do
       expect(h).to have_key(:type)
       expect(h[:type]).to eq 'photo'
       expect(h).to have_key(:media)
-      expect(h[:media]).to eq 'http://example.com/image.small.jpg'
+      expect(h[:media]).to be_a(Faraday::UploadIO)
+      expect(a_request(:get, 'http://example.com/image.small.jpg')).to have_been_made
     end
   end
 end
