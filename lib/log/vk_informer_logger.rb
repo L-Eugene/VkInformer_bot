@@ -26,6 +26,11 @@ module Vk
     log.__send__(type, "#{error_info.message}\n#{error_info.backtrace.join("\n")}\n===========\n#{error_info.inspect}")
   end
 
+  # Monotonic seconds, for durations in log records
+  def self.clock
+    Process.clock_gettime(Process::CLOCK_MONOTONIC)
+  end
+
   def self.log
     Vk::Log.instance.logger
   end

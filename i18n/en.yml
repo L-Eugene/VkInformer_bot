@@ -39,14 +39,18 @@ chat:
     If you removed group by mistake - you should add it back manually using /add command.
 wall:
   process: ++ Processing %{domain}.
-  sending: +++ Sending %{message}.
+  loaded: +++ Received %{received} posts, %{new} new (last sent %{last}).
+  sending: +++ Sending %{message} to %{chats} chats.
   last: +++ Updating last for %{domain} (%{last})
+  done: ++ Done with %{domain} in %{time}s, %{sent} new posts sent.
+  failed: ++ Failed to process %{domain} after %{time}s, %{sent} new posts sent before failure.
 token:
   select: |-
     +++ Selected VK token #%{id}
 scan:
   start: Starting scan
-  finish: Finish scan
+  finish: 'Finish scan in %{time}s. Walls: %{ok} ok, %{failed} failed, %{idle} without enabled chats. New posts sent: %{posts}.'
+  telegram_unavailable: Telegram API is not available, skipping scan.
 error:
   vk_api: VK API. %{error}
   vk_api_parse: |-
