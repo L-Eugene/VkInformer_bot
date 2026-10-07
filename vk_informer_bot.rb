@@ -44,11 +44,11 @@ class VkInformerBot
   def scan
     cleanup
 
+    started = Vk.clock
     log.info Vk.t.scan.start
+    return log.error(Vk.t.scan.telegram_unavailable) unless Vk::Tlg.available?
 
-    Vk::Wall.process if Vk::Tlg.available?
-
-    log.info Vk.t.scan.finish
+    log_scan_result(Vk::Wall.process, started)
   rescue StandardError
     Vk.log_format($ERROR_INFO)
   ensure
@@ -56,6 +56,13 @@ class VkInformerBot
   end
 
   private
+
+  def log_scan_result(stats, started)
+    log.info Vk.t.scan.finish(
+      ok: stats[:ok], failed: stats[:failed], idle: stats[:idle], posts: stats[:posts],
+      time: (Vk.clock - started).round(1)
+    )
+  end
 
   def process_callback(callback)
     @chat = Vk::Chat.find_or_create_by(chat_id: callback.message.chat.id)

@@ -103,6 +103,44 @@ describe Vk::Wall do
       expect(@wall.__send__(:new_messages)).to eq []
       expect(chat.reload.walls.size).to eq 0
     end
+
+    describe 'results' do
+      before :each do
+        allow(Vk.log).to receive(:info).and_call_original
+        allow(Vk.log).to receive(:error).and_call_original
+      end
+
+      it 'should report received and sent posts' do
+        allow(@wall).to receive(:send_message)
+
+        expect(@wall.process).to eq(status: :ok, posts: 5)
+        expect(Vk.log).to have_received(:info).with(%r{Received \d+ posts, 5 new \(last sent 0\)})
+        expect(Vk.log).to have_received(:info).with(%r{Done with test in [\d.]+s, 5 new posts sent})
+      end
+
+      it 'should report failure to load wall' do
+        allow(@wall).to receive(:http_load).and_raise(Faraday::Error.new('timeout'))
+
+        expect(@wall.process).to eq(status: :failed, posts: 0)
+        expect(Vk.log).to have_received(:error).with(%r{Failed to process test})
+      end
+
+      it 'should report posts sent before failure' do
+        calls = 0
+        allow(@wall).to receive(:send_message) { raise 'boom' if (calls += 1) == 3 }
+
+        expect(@wall.process).to eq(status: :failed, posts: 2)
+        expect(Vk.log).to have_received(:error).with(%r{Failed to process test .*2 new posts sent before failure})
+      end
+
+      it 'should summarize all walls' do
+        FactoryBot.create(:chat, id: 1).walls << @wall
+        FactoryBot.create(:wall, id: 2, domain: 'idle', last_message_id: 0)
+        allow_any_instance_of(Vk::Wall).to receive(:send_message)
+
+        expect(Vk::Wall.process).to include(ok: 1, idle: 1, posts: 5)
+      end
+    end
   end
 
   describe 'Generate keyboard buttons' do

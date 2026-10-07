@@ -23,18 +23,23 @@ module Vk
 
     def send_message(msg)
       post = Vk::Post.new msg, self
-      Vk.log.info Vk.t.wall.sending(message: post.message_id)
-      chats.each { |chat| chat.send_post(post) if chat.enabled? }
+      targets = chats.select(&:enabled?)
+      Vk.log.info Vk.t.wall.sending(message: post.message_id, chats: targets.size)
+      targets.each { |chat| chat.send_post(post) }
     end
 
+    # Returns { status: :ok | :failed, posts: number of new posts sent }
     def process
+      started = Vk.clock
+      @sent = 0
       Vk.log.info Vk.t.wall.process(domain: domain)
-      records = new_messages
-      records.each do |msg|
-        Vk.log.debug "API message object: #{msg.inspect}"
-        send_message(msg)
-        update_last [msg]
-      end
+      return processed(:failed, started) unless (data = hash_load)
+
+      send_new_messages(fresh_messages(data), data.size)
+      processed(:ok, started)
+    rescue StandardError
+      Vk.log_format($ERROR_INFO)
+      processed(:failed, started)
     end
 
     def update_last(records = new_messages)
@@ -75,11 +80,39 @@ module Vk
       ]
     end
 
+    # Processes watched walls and returns scan statistics:
+    # { ok:, failed:, idle: (walls without enabled chats), posts: }
     def self.process
-      find_each { |wall| wall.process if wall.watched? }
+      find_each.each_with_object(Hash.new(0)) do |wall, stats|
+        next stats[:idle] += 1 unless wall.watched?
+
+        result = wall.process
+        stats[result[:status]] += 1
+        stats[:posts] += result[:posts]
+      end
     end
 
     private
+
+    def send_new_messages(records, received)
+      Vk.log.info Vk.t.wall.loaded(received: received, new: records.size, last: last_message_id)
+      records.each do |msg|
+        Vk.log.debug "API message object: #{msg.inspect}"
+        send_message(msg)
+        update_last [msg]
+        @sent += 1
+      end
+    end
+
+    def processed(status, started)
+      time = (Vk.clock - started).round(1)
+      if status == :ok
+        Vk.log.info Vk.t.wall.done(domain: domain, sent: @sent, time: time)
+      else
+        Vk.log.error Vk.t.wall.failed(domain: domain, sent: @sent, time: time)
+      end
+      { status: status, posts: @sent }
+    end
 
     # last message id
     def lmi(records)
@@ -116,6 +149,10 @@ module Vk
     def new_messages
       return [] unless (data = hash_load)
 
+      fresh_messages(data)
+    end
+
+    def fresh_messages(data)
       data.select  { |msg| msg[:id].to_i > last_message_id }
           .sort_by { |msg| msg[:id].to_i }
           .map do |msg|
